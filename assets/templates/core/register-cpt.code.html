@@ -1,0 +1,61 @@
+<span ng-if="wordpress.$valid">function {{formFields.settingsFunctionName || codePressApp.template.functionName}}() {<span ng-if="cptShowLabels('labels')">
+    $labels = array(
+        'name'               => _x( '{{ formFields.cptName | escape}}', 'post type general name', '{{ formFields.settingsTextDomain || codePressApp.template.textDomain }}' ),<span ng-if="wordpress.cptSingularName.$modelValue.length">
+        'singular_name'      => _x( '{{ formFields.cptSingularName | escape }}', 'post type singular name', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-if="wordpress.cptMenuName.$modelValue.length">
+        'menu_name'          => _x( '{{ formFields.cptMenuName | escape }}', 'admin menu', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-if="wordpress.cptNameAdminBar.$modelValue.length">
+        'name_admin_bar'     => _x( '{{ formFields.cptNameAdminBar | escape }}', 'add new on admin bar', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-if="wordpress.cptAddNew.$modelValue.length">
+        'add_new'            => _x( '{{ formFields.cptAddNew | escape }}', 'book', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-if="wordpress.cptAddNewItem.$modelValue.length">
+        'add_new_item'       => __( '{{ formFields.cptAddNewItem | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-if="wordpress.cptNewItem.$modelValue.length">
+        'new_item'           => __( '{{ formFields.cptNewItem | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-if="wordpress.cptEditItem.$modelValue.length">
+        'edit_item'          => __( '{{ formFields.cptEditItem | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-if="wordpress.cptViewItem.$modelValue.length">
+        'view_item'          => __( '{{ formFields.cptViewItem | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-if="wordpress.cptAllItems.$modelValue.length">
+        'all_items'          => __( '{{ formFields.cptAllItems | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-if="wordpress.cptSearchItems.$modelValue.length">
+        'search_items'       => __( '{{ formFields.cptSearchItems | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-if="wordpress.cptParentItemColon.$modelValue.length">
+        'parent_item_colon'  => __( '{{ formFields.cptParentItemColon | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-if="wordpress.cptNotFound.$modelValue.length">
+        'not_found'          => __( '{{ formFields.cptNotFound | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-if="wordpress.cptNotFoundInTrash.$modelValue.length">
+        'not_found_in_trash' => __( '{{ formFields.cptNotFoundInTrash | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' )</span>
+    );
+</span>
+<span ng-if="cptCapabilities()">
+$capabilities = array(
+    {{cptCapabilities()}}
+);
+</span>
+    $args = array(<span ng-if="wordpress.cptDescription.$modelValue.length">
+        'description'           => __( '{{ formFields.cptDescription | escape }}', '{{ formFields.settingsTextDomain || codePressApp.template.textDomain }}' ),</span><span ng-if="wordpress.cptIsPublic.$modelValue">
+        'public'                => true,</span><span ng-if="wordpress.cptIsPublic.$modelValue != wordpress.cptPubliclyQueryable.$modelValue">
+        'publicly_queryable'    => {{ wordpress.cptPubliclyQueryable.$modelValue ? 'true' : 'false' }},</span><span ng-if="wordpress.cptIsPublic.$modelValue != wordpress.cptShowUi.$modelValue">
+        'show_ui'               => {{ wordpress.cptShowUi.$modelValue ? 'true' : 'false' }},</span><span ng-if="wordpress.cptShowInMenu.$modelValue != wordpress.cptShowUi.$modelValue || formFields.cptShowAsTopLevel != 'Menu'">
+        'show_in_menu'          => {{ formFields.cptShowAsTopLevel == 'Menu' ? 'true' : 'false' }},</span><span ng-if="wordpress.cptShowInNavMenu.$modelValue != wordpress.cptIsPublic.$modelValue">
+        'show_in_nav_menus'     => {{ wordpress.cptShowInNavMenu.$modelValue ? 'true' : 'false' }},</span><span ng-if="wordpress.cptShowInAdminBar.$modelValue != wordpress.cptShowUi.$modelValue">
+        'show_in_admin_bar'     => {{ wordpress.cptShowInAdminBar.$modelValue }},</span><span ng-if="wordpress.cptMenuPosition.$modelValue != 25">
+        'menu_position'         => {{ formFields.cptMenuPosition }},</span><span ng-if="formFields.iconUrl == 'custom'">
+        'menu_icon'             => {{ formFields.iconUrlValue | escape }},</span><span ng-if="formFields.iconUrl == 'dashicon' && formFields.iconUrlDashicon.length">
+        'menu_icon'             => '{{ formFields.iconUrlDashicon }}',</span><span ng-if="wordpress.cptHierarchical.$modelValue">
+        'hierarchical'          => true,</span><span ng-if="wordpress.cptExcludeFromSearch.$modelValue == wordpress.cptIsPublic.$modelValue">
+        'exclude_from_search'   => {{ wordpress.cptExcludeFromSearch.$modelValue }},</span><span ng-if="! wordpress.cptQueryVar.$modelValue">
+        'query_var'             => false,</span><span ng-if="! wordpress.cptCanExport.$modelValue">
+        'can_export'            => false,</span><span ng-if="wordpress.cptShowInRest.$modelValue">
+        'show_in_rest'          => true,</span><span ng-if="wordpress.cptRestControllerClass.$modelValue">
+        'rest_controller_class' => '{{formFields.cptRestControllerClass}}',</span><span ng-if="wordpress.cptRestBase.$modelValue && formFields.cptRestBase != formFields.cptPostTypeKey">
+        'rest_base'             => '{{formFields.cptRestBase}}',</span><span ng-if="cptRewrite()">
+        'rewrite'               => array( {{cptRewrite()}} ),</span><span ng-if="! wordpress.cptQueryVar.$modelValue">
+        'capability_type'       => 'post',</span><span ng-if="wordpress.cptHasArchive.$modelValue && ! wordpress.cptArchiveSlug.$modelValue.length">
+        'has_archive'           => true,</span><span ng-if="wordpress.cptArchiveSlug.$modelValue">
+        'has_archive'           => '{{formFields.cptArchiveSlug}}',</span><span ng-if="! wordpress.cptQueryVar.$modelValue">
+        'hierarchical'          => false,</span><span ng-if="! wordpress.cptQueryVar.$modelValue">
+        'menu_position'         => null,</span><span ng-if="cptSupports()">
+        'supports'              => array( {{ cptSupports() }} ),</span><span ng-if="cptTaxonomies()">
+        'taxonomies'            => array( {{cptTaxonomies() }} ),</span><span ng-if="wordpress.cptCapabilityType.$modelValue">
+        'capability_type'       => '{{ formFields.cptCapabilityType }}',</span><span ng-if="wordpress.cptName.$modelValue.length">
+        'label'                 => '{{ formFields.cptName | escape }}',</span><span ng-if="cptShowLabels('labels')">
+        'labels'                => $labels,</span><span ng-if="cptCapabilities()">
+        'capabilities'          => $capabilities,</span>
+    );
+
+<span ng-if="wordpress.cptPostTypeKey.$modelValue.length">
+    register_post_type( '{{ formFields.cptPostTypeKey }}', $args );</span>
+}
+
+add_action( 'init', '{{formFields.settingsFunctionName || codePressApp.template.functionName}}' );
+</span>

@@ -1,0 +1,126 @@
+/**
+ * Widgets generator
+ */
+.wp-widget {
+  $color__border: #e5e5e5;
+  $color__border__hover: #999;
+  $color__white: #fff;
+  $color__title: #23282d;
+  $color__title_bg: #fafafa;
+
+  font-family: 'Open Sans', sans-serif;
+
+  &__title {
+    font-size: 17px;
+  }
+
+  &__widget {
+    &__title {
+      margin: 0;
+      padding: 0 15px 0 15px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      @include user-select(none);
+      background: $color__title_bg;
+      color: $color__title;
+      max-width: 270px;
+      height: 43px;
+      border: 1px solid $color__border;
+      box-shadow: 0 1px 1px rgba(0,0,0,0.04);
+
+      &:hover {
+        border-color: $color__border__hover;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      }
+    }
+
+    &__input {
+      margin: 0;
+      font-size: 13px;
+      padding-top: 6px;
+    }
+
+    &__description {
+      margin: 20px 15px 10px 15px;
+      font-size: 12px;
+      max-width: 270px;
+    }
+
+    &__field {
+      &__settings {
+        border-left: 3px solid #333;
+
+        &.ng-hide {
+          padding: 0;
+        }
+      }
+    }
+  }
+
+  &__sidebar {
+    background: $color__white;
+    padding: 0 8px 15px;
+    border: 1px solid $color__border;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.04);
+    margin-top: 4px;
+
+    &__title {
+      max-width: none;
+
+      &__input {
+        width: calc(100% - 10px) !important;
+      }
+
+      &__arrow {
+        &:before {
+          line-height: 31px;
+        }
+      }
+    }
+
+    &__inside {
+      border: 1px solid $color__border;
+      border-top: none;
+      padding: 15px;
+      line-height: 16px;
+
+      &__item {
+
+      }
+
+      &__select {
+        margin-bottom: 20px;
+
+        md-radio-group {
+          padding-bottom: 0;
+        }
+      }
+
+      &__settings {
+        fill: $color__white;
+
+        svg {
+          height: 38px;
+        }
+      }
+
+      &__delete {
+        &.md-fab {
+          min-width: 40px;
+        }
+      }
+
+      &__add {
+        svg {
+          fill: $color__white;
+          vertical-align: middle;
+        }
+
+        &-option {
+          margin-right: -48px;
+        }
+      }
+    }
+  }
+}

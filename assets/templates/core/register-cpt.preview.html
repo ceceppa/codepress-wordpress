@@ -1,0 +1,390 @@
+<div layout="column" layout-fill flex>
+  <md-content flex layout="column">
+    <md-tabs md-border-bottom flex layout="column">
+      <md-tab id="basic" flex>
+        <!-- Basic -->
+        <md-tab-label>Basic</md-tab-label>
+        <md-tab-body layout="column" flex>
+          <div class="md-padding">
+            <div class="layout-row">
+              <!-- Name  -->
+              <md-input-container>
+                <label for="cptName" class="required label-help" ng-mouseenter="showHelp('cptName')" ng-mouseleave="hideHelp()">Name</label>
+                <input type="text" name="cptName" id="cptName" placeholder="Books" ng-required="true" ng-model="formFields.cptName" ng-focus="showHelp('cptName')" ng-blur="hideHelp()" ng-change="updateField()">
+                <div ng-messages="wordpress.cptName.$error" md-auto-hide="false">
+                  <div ng-message="required">
+                    This field is required
+                  </div>
+                </div>
+                <p class="hidden" data-field="cptName">general name for the post type, usually plural. The same as, and overridden by $post_type_object->label</p>
+              </md-input-container>
+
+              <!-- Post type key -->
+              <md-input-container>
+                <label for="cptPostTypeKey" class="required label-help title" ng-mouseenter="showHelp('cptPostTypeKey')" ng-mouseleave="hideHelp()">Post type</label>
+                <input type="text" name="cptPostTypeKey" id="cptPostTypeKey" ng-model="formFields.cptPostTypeKey" ng-trim="false" placeholder="book" ng-required="true" ng-focus="showHelp('cptPostTypeKey')" ng-blur="hideHelp()" sanitize-title>
+                <div ng-messages="wordpress.cptPostTypeKey.$error" md-auto-hide="false">
+                  <div ng-message="required">
+                    This field is required
+                  </div>
+                </div>
+                <p data-field="cptPostTypeKey" class="hidden">Post type. (max. 20 characters, cannot contain capital letters or spaces)</p>
+              </md-input-container>
+            </div>
+
+            <div class="layout-row">
+              <!-- Singular name -->
+              <md-input-container>
+                <label for="cptSingularName" class="label-help" ng-mouseenter="showHelp('cptSingularName')" ng-mouseleave="hideHelp()">Singular Name</label>
+                <input type="text" name="cptSingularName" id="cptSingularName" placeholder="Book" ng-required="false" ng-model="formFields.cptSingularName" ng-focus="showHelp('cptSingularName')" ng-blur="hideHelp()">
+                <p class="hidden" data-field="cptSingularName">name for one object of this post type. Defaults to value of 'name'.</p>
+              </md-input-container>
+
+              <!-- Description -->
+              <md-input-container flex>
+                <label for="cptDescription" class="label-help title" ng-mouseenter="showHelp('cptDescription')" ng-mouseleave="hideHelp()">Description</label>
+                <textarea type="text" name="cptDescription" id="cptDescription" ng-model="formFields.cptDescription" ng-trim="false" value="{{ formFields.cptDescription }}" ng-focus="showHelp('cptDescription')" ng-blur="hideHelp()" row="4"></textarea>
+                <p class="hidden" data-field="cptDescription">A short descriptive summary of what the post type is.</p>
+              </md-input-container>
+            </div>
+          </div>
+        </md-tab-body>
+      </md-tab>
+
+      <!-- Visibility -->
+      <md-tab>
+        <md-tab-label>Visibility</md-tab-label>
+        <md-tab-body>
+          <div layout="row" flex class="md-padding" ng-init="formFields.cptShowInMenu = true">
+            <div class="layout-column" flex>
+              <!--  Show in Menu -->
+              <md-switch name="cptShowInMenu" id="cptShowInMenu" value="1" ng-model="formFields.cptShowInMenu" ng-mouseenter="showHelp('cptShowInMenu')" ng-mouseleave="hideHelp()" ng-disabled="! formFields.cptShowUi" data-label="Show in menu" data-default="cptShowUi">
+                Show in menu
+              </md-switch>
+              <p class="hidden" data-field="cptShowInMenu">
+                Where to show the post type in the admin menu.<br>
+                <br>\nDefault: value of show_ui argument<br />
+                <span class=\"help-li\">'false' - do not display in the admin menu</span>
+                <span class=\"help-li\">'true' - display as a top level menu</span>
+                <span class=\"help-li\">'some string' - If an existing top level page such as 'tools.php' or 'edit.php?post_type=page', the post type will be placed as a sub menu of that.<br><br>
+                  Note: When using 'some string' to show as a submenu of a menu page created by a plugin, this item will become the first submenu item, and replace the location of the top-level link. If this isn't desired, the plugin that creates the menu page needs to set the add_action priority for admin_menu to 9 or lower.<br><br>Note: As this one inherits its value from show_ui, which inherits its value from public, it seems to be the most reliable property to determine, if a post type is meant to be publicly useable. At least this works for _builtin post types and only gives back post and page.</span>
+                </p>
+
+              <div class="ng-show-animation" ng-if="formFields.cptShowInMenu">
+                <md-radio-group ng-model="formFields.cptShowAsTopLevel" ng-init="formFields.cptShowAsTopLevel='Menu'">
+                  <md-radio-button ng-model="data.group1" name="cptShowIn[]" id="cptShowAsTopLevel" value="Menu" ng-mouseenter="showHelp('cptShowAsTopLevel')" ng-mouseleave="hideHelp()" data-label="Top level menu">Top level menu</md-radio-button>
+                  <md-radio-button ng-model="data.group1" name="cptShowIn[]" id="cptShowAsSubItem" value="Submenu" ng-mouseenter="showHelp('cptShowAsSubItem')" ng-mouseleave="hideHelp()" data-label="Sub item">Sub item</md-radio-button>
+                </md-radio-group>
+                <p class="hidden" data-field="cptShowAsTopLevel">The position in the menu order the post type should appear.</p>
+                <p class="hidden" data-field="cptShowAsSubItem">If an existing top level page such as 'tools.php' or 'edit.php?post_type=page', the post type will be placed as a sub menu of that.</p>
+
+                <!-- Show as Top Level menu -->
+                <ul class="wp-admin-menu wp-admin-top-level " ng-if="formFields.cptShowAsTopLevel == 'Menu'">
+                  <li class="wp-admin-menu__item" ng-init="showBelowItems = 0;menuIcon = 'dashicons-admin-comments'">
+                    <input type="hidden" name="cptMenuPosition" id="cptMenuPosition" ng-model="formFields.cptMenuPosition" ng-init="formFields.cptMenuPosition = 25">
+                    <md-button class="wp-admin-menu__item--below wp-button__full" ng-click="showBelowItems = ! showBelowItems">
+                      <md-tooltip md-direction="top">Show below...</md-tooltip>
+                      <span class="wp-admin-menu__item__icon dashicons-before {{menuIcon}}"></span>{{ menuPositionLabel || 'Comments' }}
+                    </md-button>
+                    <div class="wp-combo" ng-if="showBelowItems">
+                      <ul class="wp-combo__options bg-scrollable md-whiteframe-2dp">
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showBelowItems = false;menuIcon='dashicons-admin-post';formFields.cptMenuPosition = 5;menuPositionLabel = 'Posts'">below Posts</md-button></li>
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showBelowItems = false;menuIcon='dashicons-admin-media';formFields.cptMenuPosition = 10;menuPositionLabel = 'Media'">below Media</md-button></li>
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showBelowItems = false;menuIcon='dashicons-admin-page';formFields.cptMenuPosition = 20;menuPositionLabel = 'Pages'">below Pages</md-button></li>
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showBelowItems = false;menuIcon='dashicons-admin-comments';formFields.cptMenuPosition = 25;menuPositionLabel = 'Comments'">below Comments</md-button></li>
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showBelowItems = false;menuIcon='';formFields.cptMenuPosition = 60;menuPositionLabel = '----- (first separator)'">below first separator</md-button></li>
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showBelowItems = false;menuIcon='dashicons-admin-plugins';formFields.cptMenuPosition = 65;menuPositionLabel = 'Plugins'">below Plugins</md-button></li>
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showBelowItems = false;menuIcon='dashicons-admin-users';formFields.cptMenuPosition = 70;menuPositionLabel = 'Users'">below Users</md-button></li>
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showBelowItems = false;menuIcon='dashicons-admin-tools';formFields.cptMenuPosition = 75;menuPositionLabel = 'Tools'">below Tools</md-button></li>
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showBelowItems = false;menuIcon='dashicons-admin-settings';formFields.cptMenuPosition = 80;menuPositionLabel = 'Settings'">below Settings</md-button></li>
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showBelowItems = false;menuIcon='';formFields.cptMenuPosition = 100;menuPositionLabel = '----- (second separator)'">below second separator</md-button></li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li class="wp-admin-menu__item cpt-menu">
+                    <span class="wp-admin-menu__item__icon wp-admin-menu__item__icon--cpt dashicons-before" ng-class="formFields['iconUrl'] == 'dashicon' && formFields['iconUrlDashicon'] ? formFields['iconUrlDashicon'] : (formFields.iconUrl == 'custom' ? 'dashicons-format-image' : 'dashicons-admin-post')"></span><input type="text" class="wp-admin-menu__item__input wp-admin-menu__item__input--cpt" id="cptMenuName" name="cptMenuName" ng-model="formFields.cptMenuName" placeholder="{{ formFields.cptName || 'Books' }}" ng-focus="showHelp('cptMenuName')" ng-blur="hideHelp()">
+                    <label for="cptMenuName" class="dashicons dashicons-edit wp-admin-menu__item__input__icon wp-admin-menu__item__input__icon--edit" data-title="Menu name"></label>
+                    <p class="hidden" data-field="cptMenuName">The menu name text. This string is the name to give menu items.</p>
+                    <ul class="wp-admin-menu__submenu">
+                      <li class="wp-admin-menu__submenu__item">
+                        <input type="text" id="cptAllItems" name="cptAllItems" class="wp-admin-menu__item__input" ng-model="formFields.cptAllItems" value="{{formFields.cptAllItems}}" placeholder="{{ formFields.cptName || 'Books' }}" ng-focus="showHelp('cptAllItems')" ng-blur="hideHelp()">
+                        <label for="cptAllItems" class="dashicons wp-admin-menu__item__input__icon dashicons-edit" data-title="All Items"></label>
+                        <p class="hidden" data-field="cptAllItems">The all items text used in the menu.</p>
+                      </li>
+                      <li class="wp-admin-menu__submenu__item">
+                        <input type="text" id="cptAddNew" name="cptAddNew" class="wp-admin-menu__item__input" ng-model="formFields.cptAddNew" placeholder="Add new" ng-focus="showHelp('cptAddNew')" ng-blur="hideHelp()">
+                        <label for="cptAddNew" class="dashicons wp-admin-menu__item__input__icon dashicons-edit"></label>
+                        <p class="hidden" data-field="cptAddNew">the add new item text. Default is Add New Post/Add New Page</p>
+                      </li>
+                      <li class="wp-admin-menu__submenu__item">
+                        <md-switch name="cptCategoriesSupport" id="cptCategoriesSupport" ng-model="formFields.cptCategoriesSupport" value="1" class="wp-admin-menu__submenu__item__switch">
+                          Categories
+                          <md-tooltip>Add post categories support (post_cat)</md-tooltip>
+                        </md-switch>
+                      </li>
+                      <li class="wp-admin-menu__submenu__item">
+                        <md-switch name="cptTagSupport" id="cptTagSupport" ng-model="formFields.cptTagSupport" value="1" class="wp-admin-menu__submenu__item__switch">
+                          Tag
+                          <md-tooltip>Add post tag support (post_tag)</md-tooltip>
+                        </md-switch>
+                      </li>
+                      <li class="wp-admin-menu__submenu__item">
+                        <input type="text" class="wp-admin-menu__item__input" name="cptCustomTaxonomySupport" id="cptCustomTaxonomySupport" ng-model="formFields.cptCustomTaxonomySupport" value="" placeholder="Custom taxonomy" class="short" ng-focus="showHelp('cptCustomTaxonomySupport')" ng-blur="hideHelp()">
+                        <label for="cptCustomTaxonomySupport" class="dashicons dashicons-edit label-help wp-admin-menu__item__input__icon"></label>
+                        <p class="hidden" data-field="cptCustomTaxonomySupport">Custom taxonomies need to be registered with <a href="/#/generators/wordpress/register-taxonomy" target="_blank">register_taxonomy().</a></p>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+
+                <!-- Show as sub item -->
+                <ul class="wp-admin-menu wp-admin-top-level" ng-if="formFields.cptShowAsTopLevel == 'Submenu'" ng-init="showSubMenuItems = false; formFields.cptTopLevelPage = 'edit.php'">
+                  <li class="wp-admin-menu__item">
+                    <input type="hidden" name="cptTopLevelPage" id="cptTopLevelPage" value="{{cptTopLevelPage}}" ng-model="formFields.cptTopLevelPage">
+                    <md-button class="wp-admin-menu__item--below wp-button__full" ng-click="showSubMenuItems = ! showSubMenuItems">
+                      <md-tooltip md-direction="top">Select the top level page, or set your own</md-tooltip>
+                      {{ menuTopLevelPage || 'Posts' }}
+                    </md-button>
+                    <div class="wp-combo" ng-if="showSubMenuItems">
+                      <ul class="wp-combo__options bg-scrollable md-whiteframe-2dp">
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showSubMenuItems = false;formFields.cptTopLevelPage = 'edit.php';menuTopLevelPage = 'Posts'">Posts</md-button></li>
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showSubMenuItems = false;formFields.cptTopLevelPage = 'upload.php';menuTopLevelPage = 'Media'">Media</md-button></li>
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showSubMenuItems = false;formFields.cptTopLevelPage = 'edit.php?post_type=page';menuTopLevelPage = 'Pages'">Pages</md-button></li>
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showSubMenuItems = false;formFields.cptTopLevelPage = 'edit-comments.php';menuTopLevelPage = 'Comments'">Comments</md-button></li>
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showSubMenuItems = false;formFields.cptTopLevelPage = 'themes.php';menuTopLevelPage = 'Links'">Appearance</md-button></li>
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showSubMenuItems = false;formFields.cptTopLevelPage = 'plugins.php';menuTopLevelPage = 'Plugins'">Plugins</md-button></li>
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showSubMenuItems = false;formFields.cptTopLevelPage = 'users.php';menuTopLevelPage = 'Users'">Users</md-button></li>
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showSubMenuItems = false;formFields.cptTopLevelPage = 'tools.php';menuTopLevelPage = 'Tools'">Tools</md-button></li>
+                        <li class="wp-combo__options--option"><md-button class="wp-button__full" ng-click="showSubMenuItems = false;formFields.cptTopLevelPage = 'options-general.php';menuTopLevelPage = 'Settings'">Settings</md-button></li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li class="wp-admin-menu__item">
+                    <input type="text" class="wp-admin-menu__item__input" id="cptTopLevelName" name="cptTopLevelName" ng-model="formFields.cptTopLevelName" value="{{formFields.cptTopLevelName}}" placeholder="your own top level page"  ng-focus="showHelp('cptTopLevelName')" ng-blur="hideHelp()">
+                    <label for="cptTopLevelName" class="dashicons dashicons-edit label-help wp-admin-menu__item__input__icon"></label>
+                    <p class="hidden" data-field="cptTopLevelName">If an existing top level page such as 'tools.php' or 'edit.php?post_type=page', the post type will be placed as a sub menu of that.</p>
+                  </li>
+                </ul>
+
+              </div>
+            </div>
+
+            <div layout="column" flex>
+              <div class="layout-row" ng-repeat="field in fields.visibility">
+                <div ng-if="field.type == 'checkbox'">
+                  <md-switch name="{{ field.name }}" id="{{ field.name }}" value="{{field.value}}" ng-model="formFields[field.name]" ng-mouseenter="showHelp(field.name)" ng-mouseleave="hideHelp()"  ng-init="formFields[field.name]=field.checked" data-default="{{field.default}}" ng-change="changeDefaults()">
+                    {{field.label}}
+                  </md-switch>
+                  <label for="{{ field.name }}" class="hidden">{{field.label}}</label>
+                </div>
+
+                <div ng-if="field.type == 'select'">
+                  <md-input-container ng-mouseenter="showHelp(field.name);highlight(field.highlight)" ng-mouseleave="hideHelp();removeHighlight(field.highlight)" ng-class="field.cssClass">
+                    <label for="{{field.name}}">{{field.label}}</label>
+                    <md-select ng-model="formFields[field.name]" ng-required="field.required" md-container-class="{{field.containerClass}}" ng-if="! field.hasLabels">
+                        <md-option ng-repeat="option in field.options" ng-value="option" ng-selected="option == field.default">{{option}}</md-option>
+                    </md-select>
+
+                    <md-select ng-model="formFields[field.name]" ng-required="field.required" md-container-class="{{field.containerClass}}" ng-if="field.hasLabels">
+                      <md-option ng-repeat="(option, value) in field.options" ng-value="option == '@' ? formFields[value] : option" ng-selected="option == field.default" ng-if="option == '@' ? formFields[value] : true" ng-click="formFields[field.name + 'Title'] = value">{{option == '@' ? formFields[value] : value}}</md-option>
+                    </md-select>
+                  </md-input-container>
+                </div>
+
+                <!-- Dashicons -->
+                <div ng-if="field.type == 'dashicons' && formFields[field.ifField] == field.ifEqual" class="dashicons-container full-width">
+                  <md-input-container ng-class="field.cssClass" ng-mouseenter="showHelp(field.name);" ng-mouseleave="hideHelp()" aria-label="field.label">
+                    <label for="{{field.name}}">{{formFields.iconUrlDashicon || field.label}}</label>
+                    <input type="text" name="searchIcon" id="searchIcon" ng-model="searchIcon" ng-focus="showDashIcons = true" ng-blur="showDashIcons = false" ng-class="field.class">
+                  </md-input-container>
+
+                  <div class="{{field.containerClass}} bg-scrollable slide-toggle">
+                    <!-- <md-button ng-repeat="option in field.options | filter:searchIcon" ng-click="formFields[field.name] = option; console.log(option)"  aria-label="field.label"> -->
+                    <button class="md-button md-ink-ripple" ng-repeat="option in field.options | filter:searchIcon" ng-click="formFields[field.name] = option" ng-class="{'md-accent': formFields[field.name] === option}" aria-label="field.label">
+                      <span class="dashicons" ng-class="option"></span>
+                    </button>
+                  </div>
+                </div>
+
+                <div ng-if="field.type != 'checkbox' && field.type != 'select' && field.type != 'dashicons' && formFields[field.ifField] == field.ifEqual" class="field--indent slide-toggle">
+                  <md-input-container>
+                    <label for="{{ field.name }}">{{field.label}}</label>
+                    <input type="text" ng-model="formFields[field.name]" ng-focus="showHelp(field.name)" ng-blur="hideHelp()" placeholder="{{formFields.cptPostTypeKey || 'book'}}">
+                  </md-input-container>
+                </div>
+
+                <p class="hidden" data-field="{{field.name}}" ng-bind-html="field.p"></p>
+              </div>
+
+            </div>
+          </div>
+        </md-tab-body>
+      </md-tab>
+
+      <!--  Settings -->
+      <md-tab>
+        <md-tab-label>Settings</md-tab-label>
+        <md-tab-body>
+          <div class="md-padding layout-wrap" layout="row" flex>
+            <div class="layout-row" ng-repeat="field in fields.archive" flex=100>
+              <div ng-if="field.type == 'checkbox'">
+                <md-switch name="{{ field.name }}" id="{{ field.name }}" value="{{field.value}}" ng-model="formFields[field.name]" ng-mouseenter="showHelp(field.name)" ng-mouseleave="hideHelp()"  ng-init="formFields[field.name]=field.checked" data-default="{{field.default}}" ng-change="changeDefaults()">
+                  {{field.label}}
+                </md-switch>
+                <label for="{{ field.name }}" class="hidden">{{field.label}}</label>
+              </div>
+
+              <div ng-if="field.type != 'checkbox' && formFields[field.ifField] == field.ifEqual" class="field--indent slide-toggle">
+                <md-input-container>
+                  <label for="{{ field.name }}">{{field.label}}</label>
+                  <input type="text" ng-model="formFields[field.name]" ng-focus="showHelp(field.name)" ng-blur="hideHelp()" placeholder="{{formFields.cptPostTypeKey || 'book'}}">
+                </md-input-container>
+              </div>
+              <p class="hidden" data-field="{{field.name}}" ng-bind-html="field.p"></p>
+            </div>
+
+            <div class="layout-row" ng-repeat="field in fields.settings" flex=33>
+              <md-switch name="{{ field.name }}" id="{{ field.name }}" value="{{field.value}}" ng-model="formFields[field.name]" ng-mouseenter="showHelp(field.name)" ng-mouseleave="hideHelp()"  ng-init="formFields[field.name]=field.checked" data-default="{{field.default}}" ng-change="changeDefaults()">
+                {{ field.label}}
+              </md-switch>
+              <label for="{{ field.name }}" class="hidden">{{field.label}}</label>
+
+              <p class="hidden" data-field="{{field.name}}" ng-bind-html="field.p"></p>
+            </div>
+
+          </div>
+        </md-tab-body>
+      </md-tab>
+
+      <!-- Labels -->
+      <md-tab>
+        <md-tab-label>Labels</md-tab-label>
+        <md-tab-body>
+          <div class="md-padding">
+            <div class="layout-row layout-wrap">
+              <md-input-container ng-repeat="field in fields.labels">
+                <label for="{{ field.name }}" class="label-help">{{field.label}}</label>
+                <input class="labels" type="text" name="{{ field.name }}" id="{{ field.name }}" placeholder="{{ field.placeholder }}" ng-model="formFields[field.name]" ng-focus="showHelp(field.name)" ng-blur="hideHelp()" ng-value="field.value">
+                <p data-field="{{field.name}}" data-ng-bind-html="field.p" class="hidden"></p>
+              </md-input-container>
+            </div>
+          </div>
+        </md-tab-body>
+      </md-tab>
+
+        <!-- Support -->
+      <md-tab>
+        <md-tab-label>Support</md-tab-label>
+        <md-tab-body>
+          <!-- Supports -->
+          <div class="layout-row layout-wrap md-padding">
+            <div ng-repeat="field in fields.supports" flex="33" ng-init="formFields[field.key] = field.checked">
+              <md-switch name="cptSupports[]" id="cptSupport{{ field.key }}" value="{{field.value}}" ng-model="formFields[field.key]" ng-mouseenter="showHelp(field.name)" ng-mouseleave="hideHelp()">
+                {{field.label}}
+              </md-switch>
+            </div>
+          </div>
+        </md-tab-body>
+      </md-tab>
+
+        <!-- Rewrite -->
+      <md-tab>
+        <md-tab-label>Rewrite</md-tab-label>
+        <md-tab-body>
+
+          <div class="md-padding">
+            <md-input-container>
+              <input type="text" name="cptRewriteSlug" id="cptRewriteSlug" placeholder="{{formFields.cptPostTypeKey || 'book'}}" ng-model="formFields.cptRewriteSlug" ng-trim="false" ng-focus="showHelp('cptRewriteSlug')" ng-blur="hideHelp()" sanitize-title>
+              <label for="cptRewriteSlug">Slug</label>
+              <p class="hidden" data-field="cptRewriteSlug">Customize the permalink structure slug. Defaults to the $post_type value. Should be translatable</p>
+            </md-input-container>
+
+            <md-input-container ng-if="formFields.cptHasArchive">
+              <input type="text" name="cptArchiveSlug" id="cptArchiveSlug" placeholder="{{formFields.cptPostTypeKey || 'book'}}" ng-model="formFields.cptArchiveSlug" ng-trim="false" ng-focus="showHelp('cptArchiveSlug')" ng-blur="hideHelp()" sanitize-title>
+              <label for="cptArchiveSlug">Archive slug</label>
+              <p class="hidden" data-field="cptArchiveSlug">"This string will be used to generate the archive URL.<br><br>Default: Post type"</p>
+            </md-input-container>
+
+            <div class="layout-row">
+              <md-switch id="{{field.key}}" ng-model="formFields[field.key]"  ng-repeat="field in fields.rewrite" ng-init="formFields[field.key] = field.checked" ng-mouseenter="showHelp(field.key)" ng-mouseleave="hideHelp()" flex="33">
+                {{field.label}}
+                <label for="{{ field.key }}" class="hidden">{{field.label}}</label>
+                <p class="hidden" data-field="{{field.key}}" data-ng-bind-html="field.help"></p>
+              </md-switch>
+            </div>
+
+            <div class="layout-column cpt-ep-mask">
+              <div class="md-title" ng-mouseenter="showHelp('cptRewriteEpMask')" ng-mouseleave="hideHelp()" id="cptRewriteEpMask" data-label="ep_mask">ep_mask</div>
+
+              <div class="menu-item relative" ng-init="showEPMaskFields = false">
+                <p class="hidden" data-field="cptRewriteEpMask">const As of 3.4 Assign an endpoint mask for this post type. <br/>For more info see <a href=\"https://codex.wordpress.org/Function_Reference/register_post_type#rewrite\" target=\"_blank\">Codex page</a>.<span class=\"help-li\">If not specified and permalink_epmask is set, inherits from permalink_epmask</span><span class=\"help-li\">If not specified and permalink_epmask is not set, defaults to EP_PERMALINK</span></p>
+                <md-select ng-model="formFields.cptRewriteEpMask" aria-label="ep_mask">
+                  <md-option ng-repeat="epmask in fields.epmask" value="{{epmask}}" ng-selected="$first">
+                    {{epmask}}
+                  </md-option>
+                </div>
+              </div>
+            </div>
+
+        </md-tab-body>
+      </md-tab>
+
+      <!-- REST -->
+      <md-tab>
+        <md-tab-label>REST</md-tab-label>
+        <md-tab-body>
+          <div class="md-padding" layout="column">
+
+            <!-- Show in rest -->
+            <md-switch name="cptShowInRest" id="cptShowInRest" value="1" ng-model="formFields.cptShowInRest" ng-mouseenter="showHelp('cptShowInRest')" ng-mouseleave="hideHelp()">
+              show_in_rest
+            </md-switch>
+            <label for="cptShowInRest" class="hidden">show_in_rest</label>
+            <p class="hidden" data-field="cptShowInRest">Whether to expose this post type in the REST API.</p>
+
+            <!-- Rest base -->
+            <div class="slide-toggle" ng-if="formFields.cptShowInRest" layout="row">
+              <md-input-container>
+                <label for="cptRestBase" class="label-help" ng-mouseenter="showHelp('cptRestBase')" ng-mouseleave="hideHelp()">rest_base</label>
+                <input type="text" name="cptRestBase" id="cptRestBase" placeholder="{{ formFields.cptPostTypeKey || 'book' }}" ng-model="formFields.cptRestBase" ng-focus="showHelp('cptRestBase')" ng-blur="hideHelp()">
+                <p class="hidden" data-field="cptRestBase">The base slug that this post type will use when accessed using the REST API.<br><i>Default: $post_type</i></p>
+              </md-input-container>
+
+              <!-- Rest Controller class -->
+              <md-input-container>
+                <label for="cptRestControllerClass" class="label-help" ng-mouseenter="showHelp('cptRestControllerClass')" ng-mouseleave="hideHelp()">rest_controller_class</label>
+                <input type="text" name="cptRestControllerClass" id="cptRestControllerClass" placeholder="WP_REST_Posts_Controller" ng-model="formFields.cptRestControllerClass" ng-focus="showHelp('cptRestControllerClass')" ng-blur="hideHelp()" ng-trim sanitize>
+                <p class="hidden" data-field="cptRestControllerClass">An optional custom controller to use instead of WP_REST_Posts_Controller. Must be a subclass of WP_REST_Controller.<br><i>Default: WP_REST_Posts_Controller</i></p>
+              </md-input-container>
+            </div>
+
+          </div>
+        </md-tab-body>
+      </md-tab>
+
+        <!-- Capabilities -->
+      <md-tab>
+        <md-tab-label>Capabilities</md-tab-label>
+        <md-tab-body layout="column">
+          <div class="layout-row layout-wrap md-padding">
+            <md-input-container flex="33">
+              <label for="cptCapabilityType" class="">Capability Type</label>
+              <input type="text" name="cptCapabilityType" id="cptCapabilityType" placeholder="post" ng-model="formFields.cptCapabilityType" ng-trim="false" sanitize-title>
+              <p class="hidden">The string to use to build the read, edit, and delete capabilities. May be passed as an array to allow for alternative plurals when using this argument as a base to construct the capabilities, e.g. array('story', 'stories') the first array element will be used for the singular capabilities and the second array element for the plural capabilities, this is instead of the auto generated version if no array is given which would be \"storys\". The 'capability_type' parameter is used as a base to construct capabilities unless they are explicitly set with the 'capabilities' parameter. It seems that `map_meta_cap` needs to be set to false or null, to make this work (see note 2 below).</p>
+            </md-input-container>
+
+            <md-input-container ng-repeat="field in fields.capabilities" flex="33">
+              <label for="{{ field.name }}" class="">{{field.label}}</label>
+              <input type="text" name="{{ field.name }}" id="{{ field.name }}" class="field--capability" placeholder="{{field.placeholder.replace('{slug}', formFields.cptCapabilityType || 'post') }}" ng-model="formFields[field.name]" ng-trim="false" sanitize-title>
+            </md-input-container>
+
+          </div>
+          <div class="layout-column md-padding">
+            <span class="md-title">Help</span>
+            <a href="https://codex.wordpress.org/Function_Reference/register_post_type#capabilities" target="_blank">Function Reference/register post type</a>
+          </div>
+        </md-tab-body>
+      </md-tab>
+    </md-tabs>
+  </md-content>
+</div>

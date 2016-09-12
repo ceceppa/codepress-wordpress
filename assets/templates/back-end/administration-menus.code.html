@@ -1,0 +1,48 @@
+function {{formFields.settingsFunctionName || codePressApp.template.functionName}}() {
+    <span ng-if="areValids('pageTitle,menuTitle,menuSlug')">add_menu_page(
+        __( '{{formFields.pageTitle | escape}}', '{{formFields.settingsTextDomain || 'theme-slug'}}' ),
+        __( '{{formFields.menuTitle | escape}}', '{{formFields.settingsTextDomain || 'theme-slug'}}' ),
+        '{{formFields.capability}}',
+        '{{formFields.menuSlug}}',
+        '{{formFields.function}}',
+        '<span ng-if="formFields.iconUrl == 'custom'">{{formFields.iconUrlValue}}</span><span ng-if="formFields.iconUrl == 'base64'">{{formFields.iconUrlEncoded}}</span><span ng-if="formFields.iconUrl == 'dashicon'">{{formFields.iconUrlDashicon}}</span>'<span ng-if="formFields.position">,
+        '{{formFields.position}}'</span>
+    );</span><span ng-if="areValids('subpageTitle,submenuTitle,submenuSlug')">
+    add_submenu_page(
+        __( '{{formFields.subpageTitle | escape}}', '{{formFields.settingsTextDomain || 'theme-slug'}}' ),
+        __('{{formFields.submenuTitle | escape}}', '{{formFields.settingsTextDomain || 'theme-slug'}}' ),
+        '{{formFields.subCapability}}',
+        '{{formFields.submenuSlug}}',
+        '{{formFields.subFunction | nodash}}'
+    );</span><span ng-if="formFields.removeMenu">
+    remove_menu_page( '<span ng-hide="{{formFields.removeMenu == '_custom_'}}">{{formFields.removeMenu}}</span><span ng-if="{{formFields.removeMenu == '_custom_'}}">{{formFields.removeCustom | escape}}</span>' ); </span><span ng-if="areValids('removeSubmenuSlug,removeMenuSlug')">
+    remove_submenu_page( '{{formFields.removeMenuSlug | escape}}', '{{formFields.removeSubmenuSlug}}' );</span>
+}
+<span ng-if="formFields.function">
+/**
+ * The page content
+ */
+function {{formFields.function | nodash}}() {
+    echo '&lt;div class="wrap"&gt;';  //Use the default wp style for the page
+    echo '&lt;h1&gt;{{formFields.pageTitle | escape}}&lt;/h1&gt;';
+
+    //Your code goes here
+
+    echo '&lt;/div&gt; <!-- .wrap -->';
+}
+</span>
+<span ng-if="formFields.function">
+/**
+ * The sub page content
+ */
+function {{formFields.subFunction}}() {
+    echo '&lt;div class="wrap"&gt;';  //Use the default wp style for the page
+    echo '&lt;h1&gt;{{formFields.subpageTitle | escape}}&lt;/h1&gt;';
+
+    //Your code goes here
+
+
+    echo '&lt;/div&gt; <!-- .wrap -->';
+}
+</span>
+add_action( 'admin_menu', '{{formFields.settingsFunctionName || codePressApp.template.functionName}}' );

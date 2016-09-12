@@ -1,0 +1,179 @@
+<div layout="column" layout-fill flex>
+  <md-content flex layout="column">
+    <md-tabs md-border-bottom flex layout="column">
+      <md-tab id="basic" flex>
+        <!-- Basic -->
+        <md-tab-label>Basic</md-tab-label>
+        <md-tab-body layout="column" flex>
+          <div class="md-padding">
+            <div class="layout-row">
+              <!-- Name  -->
+              <md-input-container>
+                <label for="ctTaxonomy" class="required label-help" ng-mouseenter="showHelp('ctTaxonomy')" ng-mouseleave="hideHelp()">$taxonomy</label>
+                <input type="text" name="ctTaxonomy" id="ctTaxonomy" placeholder="genre" ng-required="true" ng-model="formFields.ctTaxonomy" ng-focus="showHelp('ctTaxonomy')" ng-blur="hideHelp()" ng-change="updateField()" maxlength="32" sanitize-title>
+                <div ng-messages="wordpress.ctTaxonomy.$error" md-auto-hide="false">
+                  <div ng-message="required">
+                    This field is required
+                  </div>
+                </div>
+                <p class="hidden" data-field="ctTaxonomy">The name of the taxonomy. Name should only contain lowercase letters and the underscore character, and not be more than 32 characters long (database structure restriction).<br><i class=\"indent\">Default: None</i></p>
+              </md-input-container>
+
+              <!-- Post type key -->
+              <md-input-container>
+                <label for="ctObjectType" class="required label-help title" ng-mouseenter="showHelp('ctObjectType')" ng-mouseleave="hideHelp()">$object_type</label>
+                <input type="text" name="ctObjectType" id="ctObjectType" ng-model="formFields.ctObjectType" ng-trim="false" placeholder="book" ng-required="true" ng-focus="showHelp('ctObjectType')" ng-blur="hideHelp()" sanitize-title>
+                <div ng-messages="wordpress.ctObjectType.$error" md-auto-hide="false">
+                  <div ng-message="required">
+                    This field is required
+                  </div>
+                </div>
+                <p data-field="ctObjectType" class="hidden">Name of the object type for the taxonomy object. Object-types can be built-in Post Type or any Custom Post Type that may be registered.<br><i class=\"indent\">Default: None</i><br><br>Built-in Post Types:<span class=\"help-li strong\">post</span><span class=\"help-li strong\">page</span><span class=\"help-li strong\">attachment</span><span class=\"help-li strong\">revision</span><span class=\"help-li strong\">nav_menu_item</span><br><br>Custom Post Types:<span class=\"help-li\"><strong>{custom_post_type}</strong> - Custom Post Type names must be all in lower-case and without any spaces.</span><span class=\"help-li\"><strong>null</strong> - Setting explicitly to null registers the taxonomy but doesn't associate it with any objects, so it won't be directly available within the Admin UI. You will need to manually register it using the 'taxonomy' parameter (passed through $args) when registering a custom post_type (see register_post_type()), or using register_taxonomy_for_object_type().</span></p>
+              </md-input-container>
+            </div>
+
+            <div class="layout-row">
+              <!-- Label -->
+              <md-input-container>
+                <label for="ctLabel" class="label-help" ng-mouseenter="showHelp('ctLabel')" ng-mouseleave="hideHelp()">Label</label>
+                <input type="text" name="ctLabel" id="ctLabel" placeholder="{{formFields.hierarchical ? 'Categories' : 'Tags'}}" ng-required="false" ng-model="formFields.ctLabel" ng-focus="showHelp('ctLabel')" ng-blur="hideHelp()">
+                <p class="hidden" data-field="ctLabel">A plural descriptive name for the taxonomy marked for translation.<br><i class=\"indent\">Default: overridden by $labels->name</i></p>
+              </md-input-container>
+
+              <!-- Description -->
+              <md-input-container flex>
+                <label for="ctDescription" class="label-help title" ng-mouseenter="showHelp('ctDescription')" ng-mouseleave="hideHelp()">Description</label>
+                <textarea type="text" name="ctDescription" id="ctDescription" ng-model="formFields.ctDescription" ng-trim="false" value="{{ formFields.ctDescription }}" ng-focus="showHelp('ctDescription')" ng-blur="hideHelp()" row="4"></textarea>
+                <p class="hidden" data-field="ctDescription">Include a description of the taxonomy.</p>
+              </md-input-container>
+            </div>
+          </div>
+        </md-tab-body>
+      </md-tab>
+
+      <!-- Visibility -->
+      <md-tab>
+        <md-tab-label>Visibility</md-tab-label>
+        <md-tab-body>
+          <div layout="row" flex layout-fill class="md-padding layout-wrap">
+            <!-- Visibility -->
+            <div class="layout-row" ng-repeat="field in fields.settings" flex="33">
+              <md-switch name="{{ field.name }}" id="{{ field.name }}" value="{{field.value}}" ng-model="formFields[field.name]" ng-mouseenter="showHelp(field.name)" ng-mouseleave="hideHelp()"  ng-init="formFields[field.name]=field.checked" data-default="{{field.default}}" ng-change="changeDefaults()">
+                {{field.label}}
+              </md-switch>
+              <label for="{{ field.name }}" class="hidden">{{field.label}}</label>
+              <p class="hidden" data-field="{{field.name}}" ng-bind-html="field.p"></p>
+            </div>
+          </div>
+
+          <!-- Query Var -->
+          <div layout="column" class="md-padding">
+            <md-switch id="ctQueryVar" ng-model="formFields[ctQueryVar]" ng-mouseenter="showHelp('ctQueryVar')" ng-mouseleave="hideHelp()" ng-init="formFields[ctQueryVar]=true">
+              query_var
+            </md-switch>
+            <label for="ctQueryVar" class="hidden">query_var</label>
+            <p class="hidden" data-field="ctQueryVar">
+              Sets the query_var key for this post type.<br><i>Default: true - set to $post_type</i><br>
+              <span class=\"help-li\">'false' - Disables query_var key use. A post type cannot be loaded at /?{query_var}={single_post_slug}</span>
+              <span class=\"help-li\">'string' - /?{query_var_string}={single_post_slug} will work as intended.</li><br><br>
+                <strong>Note:</strong> The query_var parameter has no effect if the 'publicly_queryable' parameter is set to false. query_var adds the custom post type’s query var to the built-in query_vars array so that WordPress will recognize it. WordPress removes any query var not included in that array.<br>
+                If set to true it allow you to request a custom posts type (book) using this: example.com/?book=life-of-pi<br>
+                If set to a string rather than true (for example ‘publication’), you can do: example.com/?publication=life-of-pi
+              </span>
+            </p>
+
+            <md-input-container class="slide-toggle" ng-show="formFields[ctQueryVar]" fill>
+              <label for="ctQueryVarString">query_var_string</label>
+              <input type="text" id="ctQueryVarString" ng-model="formFields.ctQueryVarString"  placeholder="{{ formFields.ctTaxonomy || '$taxonomy' }}" ng-focus="showHelp('ctQueryVar')" ng-blur="hideHelp()">
+            </md-input-container>
+            <p data-field="ctQueryVarString" class="hidden"></p>
+          </div>
+        </md-tab-body>
+      </md-tab>
+
+      <!-- Labels -->
+      <md-tab>
+        <md-tab-label>Labels</md-tab-label>
+        <md-tab-body>
+          <div class="md-padding">
+            <div class="layout-row layout-wrap">
+              <md-input-container ng-repeat="field in fields.labels">
+                <label for="{{ field.name }}" class="{{ field.required ? 'required' : '' }} label-help">{{field.label}}</label>
+                <input class="labels" type="{{ field.type }}" name="{{ field.name }}" id="{{ field.name }}" placeholder="{{ field.placeholder }}" ng-required="{{ field.required }}" ng-model="formFields[field.name]" ng-focus="showHelp(field.name)" ng-blur="hideHelp()" ng-value="field.value">
+                <p data-field="{{field.name}}" data-ng-bind-html="field.p" class="hidden"></p>
+              </md-input-container>
+            </div>
+          </div>
+        </md-tab-body>
+      </md-tab>
+
+        <!-- Callbacks -->
+      <md-tab>
+        <md-tab-label>Callbacks</md-tab-label>
+        <md-tab-body>
+          <div class="layout-row layout-wrap md-padding">
+            <md-input-container ng-repeat="field in fields.callbacks" flex="33">
+              <label for="{{ field.name }}" class="">{{field.label}}</label>
+              <input type="text" name="{{ field.name }}" id="{{ field.name }}" placeholder="{{ field.placeholder }}" ng-model="formFields[field.name]" ng-focus="showHelp(field.name)" ng-blur="hideHelp()" ng-trim="false" sanitize-title>
+              <p class="hidden" data-field="{{field.name}}" data-ng-bind-html="field.p"></p>
+            </md-input-container>
+          </div>
+        </md-tab-body>
+      </md-tab>
+
+      <!-- Rewrite -->
+      <md-tab>
+        <md-tab-label>Rewrite</md-tab-label>
+        <md-tab-body>
+
+          <div class="md-padding layout-column">
+            <md-input-container>
+              <input type="text" name="ctRewrite" id="ctRewrite" placeholder="{{formFields.ctTaxonomy}}" ng-model="formFields.ctRewrite">
+              <label for="ctRewrite" class="checkbox label-help" ng-mouseenter="showHelp('ctRewrite')" ng-mouseleave="hideHelp()">Slug</label>
+              <p class="hidden" data-field="ctRewrite">Customize the permalink structure slug. Defaults to the $post_type value. Should be translatable.</p>
+            </md-input-container>
+
+            <div class="layout-row">
+              <md-switch id="{{field.key}}" ng-model="formFields[field.key]"  ng-repeat="field in fields.rewrite" ng-init="formFields[field.key] = field.checked" ng-mouseenter="showHelp(field.key)" ng-mouseleave="hideHelp()" flex="33">
+                {{field.label}}
+                <label for="{{ field.key }}" class="hidden">{{field.label}}</label>
+                <p class="hidden" data-field="{{field.key}}" data-ng-bind-html="field.help"></p>
+              </md-switch>
+            </div>
+
+            <div class="layout-column cpt-ep-mask">
+              <div class="md-title" ng-mouseenter="showHelp('cptRewriteEpMask')" ng-mouseleave="hideHelp()" id="cptRewriteEpMask" data-label="ep_mask">ep_mask</div>
+
+              <div class="menu-item relative" ng-init="showEPMaskFields = false">
+                <p class="hidden" data-field="cptRewriteEpMask">
+                  const As of 3.4 Assign an endpoint mask for this post type. <br/>
+                  For more info see <a href=\"https://codex.wordpress.org/Function_Reference/register_post_type#rewrite\" target=\"_blank\">Codex page</a>.
+                  <span class=\"help-li\">If not specified and permalink_epmask is set, inherits from permalink_epmask</span>
+                  <span class=\"help-li\">If not specified and permalink_epmask is not set, defaults to EP_PERMALINK</span>
+                </p>
+                <md-select ng-model="formFields.cptRewriteEpMask" ng-mouseenter="showHelp('cptRewriteEpMask')" ng-mouseleave="hideHelp()">
+                  <md-option ng-repeat="epmask in fields.epmask" value="{{epmask}}" ng-selected="$first">
+                    {{epmask}}
+                  </md-option>
+                </div>
+              </div>
+            </div>
+
+        </md-tab-body>
+      </md-tab>
+
+      <!-- Capabilities -->
+      <md-tab>
+        <md-tab-label>Capabilities</md-tab-label>
+        <md-tab-body layout="column">
+          <div class="layout-row layout-wrap md-padding">
+            <md-input-container ng-repeat="field in fields.capabilities"  flex="33">
+              <label for="{{ field.name }}" class="">{{field.label}}</label>
+              <input type="text" name="{{ field.name }}" id="{{ field.name }}" placeholder="{{ field.placeholder }}" ng-model="formFields[field.name]" ng-trim="false" sanitize-title>
+            </md-input-container>
+          </div>
+        </md-tab-body>
+      </md-tab>
+    </md-tabs>
+  </md-content>
+</div>

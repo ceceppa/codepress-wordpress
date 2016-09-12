@@ -1,0 +1,72 @@
+<span ng-show="wordpress.$valid">function {{formFields.settingsFunctionName || 'cp_'}}manage_custom_column() {<span ng-show="formFields.addTo == '_all_' || formFields.addTo == '_cpt_'">
+    //All available post types, including custom ones
+    $post_types = get_post_types(<span ng-show="formFields.addTo == '_cpt_'">array( '_builtin' => FALSE )</span><span ng-show="formFields.addTo == '_all_'">''</span>,'names');
+
+    foreach ( $post_types as $type ) {
+        add_action( "manage_${type}_posts_custom_column", '{{formFields.settingsFunctionName || 'cp_'}}custom_column_content', 10, 2);
+        add_filter( "manage_${type}_posts_columns" , '{{formFields.settingsFunctionName || 'cp_'}}custom_column_label', 10, 1 );<span ng-if="formFields.columnSortable == 1">
+        add_filter( "manage_edit-${type}_sortable_columns" , '{{formFields.settingsFunctionName || 'cp_'}}sortable_{{formFields.columnSlug}}', 10, 1 );</span>
+    }
+</span><span ng-show="formFields.addTo == '_posts_' || formFields.addTo == '_postpages'">
+    add_action( "manage_posts_custom_column", '{{formFields.settingsFunctionName || 'cp_'}}custom_column_content', 10, 2);
+    add_filter( "manage_posts_columns" , '{{formFields.settingsFunctionName || 'cp_'}}custom_column_label', 10, 1 );<span ng-if="formFields.columnSortable == 1">
+    add_filter( "manage_edit-${type}_sortable_columns" , '{{formFields.settingsFunctionName || 'cp_'}}sortable_{{formFields.columnSlug}}', 10, 1 );</span>
+</span><span ng-show="formFields.addTo == '_pages_' || formFields.addTo == '_postpages'">
+    add_action( "manage_pages_custom_column", '{{formFields.settingsFunctionName || 'cp_'}}custom_column_content', 10, 2);
+    add_filter( "manage_pages_columns" , '{{formFields.settingsFunctionName || 'cp_'}}custom_column_label', 10, 1 );<span ng-if="formFields.columnSortable == 1">
+    add_filter( "manage_edit-${type}_sortable_columns" , '{{formFields.settingsFunctionName || 'cp_'}}sortable_{{formFields.columnSlug}}', 10, 1 );</span>
+</span>
+}
+
+function {{formFields.settingsFunctionName || 'cp_'}}custom_column_content( $column, $post_id ) {
+    if( '{{formFields.columnSlug}}' !== $column ) return;
+
+    //Your code goes here
+    echo 'your output goes here';
+}
+
+/**
+ * Add my own custom column to the list of the available ones.
+ *
+ * @param {array} array of the available columns
+ */
+function {{formFields.settingsFunctionName || 'cp_'}}custom_column_label( $columns ) {
+    $my_column = array(
+        '{{formFields.columnSlug}}' => __( '{{formFields.columnLabel | escape}}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),
+    );
+
+    <span ng-if="formFields.columnPosition == '_first_' ">return array_unshift( $columns, $my_column );</span><span ng-if="formFields.columnPosition == '_end_' ">return array_merge( $columns, $my_column );</span><span ng-if="formFields.columnPosition[0] != '_' ">$index = array_search( '{{formFields.columnPosition}}', array_keys( $columns ) );
+    if( $index === FALSE ) $index = count( $columns ) - 1;
+    return array_merge( array_slice( $columns, 0, $index + 1 ),
+                        $my_column,
+                        array_slice( $columns, $index + 1 ) );</span>
+}
+<span ng-if="formFields.columnSortable == 1">
+/**
+ * Make a column Sortable
+ *
+ * Add the new column to the sortable ones
+ */
+function {{formFields.settingsFunctionName || 'cp_'}}sortable_{{formFields.columnSlug}}( $columns ) {
+    $columns['{{formFields.columnSlug}}'] = '{{formFields.metaKey || formFields.columnSlug}}';
+
+    return $columns;
+}
+
+/**
+ * Sort the WP_Query by meta value
+ */
+add_action( 'pre_get_posts', '{{formFields.settingsFunctionName || 'cp_'}}orderby' );
+function {{formFields.settingsFunctionName || 'cp_'}}orderby( $query ) {
+    if( ! is_admin() )
+        return;
+
+    $orderby = $query->get( 'orderby');
+
+    if( '{{formFields.metaKey || formFields.columnSlug}}' == $orderby ) {
+        $query->set('meta_key','{{formFields.metaKey || formFields.columnSlug}}');
+        $query->set('orderby','meta_value_num');
+    }
+}
+</span>
+add_action( 'admin_init', '{{formFields.settingsFunctionName || 'cp_'}}manage_custom_column'}}', 10 );</span>

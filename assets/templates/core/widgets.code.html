@@ -1,0 +1,100 @@
+<span ng-show="wordpress.$valid">&lt;php
+class {{formFields.settingsFunctionName || codePressApp.template.functionName}} extends WP_Widget {
+    /**
+    * Register widget with WordPress
+    */
+    function __construct() {
+        parent::__construct(
+            '{{formFields.settingsFunctionName || codePressApp.template.functionName}}',  //Base ID
+            __( '{{formFields.widgetName || 'My Widget' | escape}}', '{{formFields.settingsTextDomain || 'theme-slug'}}'),
+            array(
+                'description' => __( '{{formFields.widgetDescription | escape}}', '{{formFields.settingsTextDomain || 'theme-slug'}}' ),
+            )
+        );
+    }
+
+    /**
+    * Front-end display of widget.
+    *
+    * @see WP_Widget::widget()
+    *
+    * @param array $args     Widget arguments.
+    * @param array $instance Saved values from database.
+    */
+    public function widget( $args, $instance ) {
+        echo $args['before_widget'];
+
+        if ( ! empty( $instance['title'] ) ) {
+          echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'] ). $args['after_title'];
+        }
+
+        //Output code goes here
+        //echo 'my widget content';
+
+        echo $args['after_widget'];
+    }
+
+    /**
+    * Back-end widget form.
+    *
+    * @see WP_Widget::form()
+    *
+    * @param array $instance Previously saved values from database.
+    */
+    public function form( $instance ) {<span ng-repeat="field in fields.dynamicFields">
+        ${{formFields[field.name + 'Id']}} = isset( $instance['{{formFields[field.name + 'Id']}}'] ) ? $instance['{{formFields[field.name + 'Id']}}'] : <span ng-hide="field.type=='select' || field.type == 'radio' || field.type == 'checkbox'">'{{formFields[field.defaultValue] | escape}}'</span><span ng-show="field.type == 'select' || field.type == 'radio'">'{{formFields[field.name + 'Option']}}'</span><span ng-show="field.type == 'checkbox'">{{formFields[field.defaultValue] ? '1' : "''"}};</span>
+        ?&gt;<span ng-repeat="field in fields.dynamicFields">
+        &lt;p&gt;<span ng-hide="field.type == 'checkbox'">
+            &lt;label for="&lt;?php echo $this->get_field_id( '{{formFields[field.name + 'Id']}}' ); ?&gt;"&gt;&lt;?php _e( '{{formFields[field.titleModel] | escape}}:', '{{formFields.settingsTextDomain || 'theme-slug'}}' ); ?&gt;&lt;/label&gt;</span>
+            <span ng-hide="field.type == 'select' || field.type=='radio' || field.type == 'color'">&lt;input class="widefat" id="&lt;?php echo $this-&gt;get_field_id( '{{formFields[field.name + 'Id']}}' ); ?&gt;" name="&lt;?php echo $this-&gt;get_field_name( '{{formFields[field.name + 'Id']}}' ); ?&gt;" type="{{field.type}}" <span ng-if="field.type != 'checkbox'">value="&lt;?php echo esc_attr( ${{formFields[field.name + 'Id']}} ); ?&gt;"</span><span ng-if="field.type == 'checkbox'">value="1" &lt?php checked( ${{formFields[field.name + 'Id']}}, 1 );?&gt;</span>&gt;</span><span ng-show="field.type == 'color'">
+            &lt;input class="my-color-field" id="&lt;?php echo $this-&gt;get_field_id( '{{formFields[field.name + 'Id']}}' ); ?&gt;" name="&lt;?php echo $this-&gt;get_field_name( '{{formFields[field.name + 'Id']}}' ); ?&gt;" type="text" value="&lt;?php echo esc_attr( ${{formFields[field.name + 'Id']}} ); ?&gt;" data-default-color="{{formFields[field.defaultValue]}}" &gt;</span><span ng-if="field.type == 'select'" class="my-color">
+            &lt;select class="widefat" id="&lt;?php echo $this-&gt;get_field_id( '{{formFields[field.name + 'Id']}}' ); ?&gt;" name="&lt;?php echo $this-&gt;get_field_name( '{{formFields[field.name + 'Id']}}' ); ?&gt;"><span ng-repeat="option in field.options">
+                &lt;option name="{{option.key}}"<span ng-show="formFields[field.name + 'Option'] == option.key" class="ng-animate-width"> selected="selected"</span>&gt;{{option.value}}&lt;/option&gt;</span>
+            &lt;select&gt;</span><span ng-if="field.type == 'radio'">
+            <span ng-repeat="option in field.options">&lt;label&gt;
+                &lt;input type="radio" id="&lt;?php echo $this-&gt;get_field_id( '{{formFields[field.name + 'Id']}}' ); ?&gt;" name="&lt;?php echo $this-&gt;get_field_name( '{{formFields[field.name + 'Id']}}' ); ?&gt;[]" value="{{option.key}}" &lt;?php checked( ${{formFields[field.name + 'Id']}}, '{{option.key}}' ) ?&gt; &gt;
+                {{option.value}}
+            &lt;/label&gt; </span></span>
+            <span ng-show="field.type == 'checkbox'">&lt;label for="&lt;?php echo $this->get_field_id( '{{formFields[field.name + 'Id']}}' ); ?&gt;"&gt;&lt;?php _e( '{{formFields[field.titleModel]}}:', '{{formFields.settingsTextDomain || 'theme-slug'}}' ); ?&gt;&lt;/label&gt;</span>
+        &lt;/p&gt;
+    </span>
+        <span ng-if="fieldsContain(fields.dynamicFields, 'type', 'color')">&lt;script&gt;(function ($) { $(function () { $('.my-color-field').wpColorPicker(); }); }(jQuery));&lt;/script&gt;</span>
+    &lt;?php
+    }
+
+    /**
+    * Sanitize widget form values as they are saved.
+    *
+    * @see WP_Widget::update()
+    *
+    * @param array $new_instance Values just sent to be saved.
+    * @param array $old_instance Previously saved values from database.
+    *
+    * @return array Updated safe values to be saved.
+    */
+    public function update( $new_instance, $old_instance ) {
+        $instance = array();<span ng-repeat="field in fields.dynamicFields">
+        $instance['{{formFields[field.name + 'Id']}}'] = ( empty( $new_instance['{{formFields[field.name + 'Id']}}'] ) ) ? <span ng-hide="field.type=='select' || field.type == 'radio'">'{{formFields[field.defaultValue] | escape}}'</span><span ng-show="field.type == 'select' || field.type == 'radio'">'{{formFields[field.name + 'Option']}}'</span> : strip_tags( $new_instance['{{formFields[field.name + 'Id']}}'] );</span>
+
+        return $instance;
+    }<span ng-if="fieldsContain(fields.dynamicFields, 'type', 'color')">
+}
+
+/**
+ * Include the wordpress picker script and style.
+ *
+ */
+function {{formFields.settingsFunctionName || codePressApp.template.functionName}}_color_picker_assets($hook_suffix) {
+    // $hook_suffix to apply a check for admin page.
+    wp_enqueue_style( 'wp-color-picker' );
+    wp_enqueue_script( 'wp-color-picker' );
+
+    //wp_enqueue_script( 'my-script-handle', get_template_directory_uri() . '/assets/jp/my-script.js', array( 'wp-color-picker' ), false, true );
+}
+
+add_action( 'admin_enqueue_scripts', '{{formFields.settingsFunctionName || codePressApp.template.functionName}}_color_picker_assets' );
+</span>
+add_action( 'widgets_init', function(){
+  register_widget( '{{formFields.settingsFunctionName || codePressApp.template.functionName}}' );
+});
+</span>

@@ -1,0 +1,103 @@
+<div ng-controller="WordPressTemplateValidation" layout="row" flex>
+  <form id="form" flex name="wordpress" method="POST" class="codepress-form" novalidate ng-submit="validate()" layout="column" ng-cloak>
+    <md-toolbar md-scroll-shrink class="md-whiteframe-1dp" ng-if="codePressApp.isEmbedded">
+    	<div class="md-toolbar-tools">
+    		<span flex>{{codePressApp.template.title}}</span>
+
+        <!-- Copy code -->
+        <md-button ngclipboard data-clipboard-target="#source-code" ngclipboard-success="showCopyDone(e, 'copy-clipboard', 'Code copied into the clipboard' )" aria-label="Copy code to clipboard" ng-show="wordpress.$valid">
+          <ng-md-icon icon="{{ _copyIcon || 'copy-clipboard' }}" options='{"duration": 500, "rotation": "none"}'></ng-md-icon>
+          <md-tooltip>Copy code to clipboard</md-tooltip>
+        </md-button>
+
+        <!-- Toggle Right sidebar -->
+        <!-- <md-button ng-click="toggleRight()" aria-label="Toggle right Sidebar" ng-hide="_lockSidebar">
+    			<ng-md-icon icon="code"></ng-md-icon>
+          <md-tooltip>Toggle right Sidebar</md-tooltip>
+    		</md-button> -->
+
+        <!-- Lock/Unlock sidebar -->
+    		<md-button ng-click="toggleSidebarLock()" aria-label="Lock/Unlock right Sidebar">
+    			<ng-md-icon icon="{{ _lockSidebar ? 'last_page' : 'first_page' }}" options='{"rotation": "none"}'></ng-md-icon>
+          <md-tooltip md-direction="left">Lock/Unlock right Sidebar</md-tooltip>
+    		</md-button>
+    	</div>
+    </md-toolbar>
+
+    <!-- The template has its own layout -->
+    <div ng-include="preview()" ng-if="preview()" layout="column" class="bg-scrollable" ng-class="{'codepress-form__content': codePressApp.isEmbedded}" flex></div>
+
+    <!-- Simple form layout -->
+    <md-content ng-hide="preview()" ng-if="fields.simpleLayout" ng-include="formSimpleLayout" class="bg-scrollable" ng-class="{'codepress-form__content': codePressApp.isEmbedded}" flex></md-content>
+
+    <!-- Tabs layout -->
+    <md-content ng-hide="preview()" ng-if="fields.tabLayout" ng-include="formTabLayout" class="bg-scrollable" ng-class="{'codepress-form__content': codePressApp.isEmbedded}" flex></md-content>
+
+    <!-- Insert into the editor -->
+    <md-button aria-label="Insert code" ng-if="codePressApp.isEmbedded" ng-show="! codePressApp.template.formCheck || wordpress.$valid" class="md-fab md-button md-ink-ripple button--insert" ng-click="sendCodeTo('source-code')">
+      <ng-md-icon icon="mode_edit" class="svg--white"></ng-md-icon>
+      <md-tooltip md-direction="left">Insert code</md-tooltip>
+    </md-button>
+
+  </form>
+
+  <md-sidenav layout="column" md-is-locked-open="_lockSidebar"  md-disable-backdrop="" class="md-whiteframe-z2 md-primary-bg md-padding md-sidenav-right bg-scrollable" md-component-id="right">
+    <div class="right-panel" flex>
+      <div id="settings" class="form-fields" ng-if="codePressApp.template.functionName || codePressApp.template.textDomain" >
+        <div layout="row" class="padding-bottom"><div flex class="md-title color-section-title" ><ng-md-icon class="color-svg" icon="settings"></ng-md-icon>Settings</div> <md-switch class="md-primary no-margin" ng-model="codePressApp.codepress.showSettings" aria-label="Toggle settings"></md-switch></div>
+          <div class="slide-toggle" ng-show="codePressApp.codepress.showSettings" layout="column">
+            <md-input-container ng-if="codePressApp.template.functionName">
+              <label>{{ codePressApp.template.functionNameLabel || 'Function Name' }}</label>
+              <input type="text" name="settingsFunctionName" id="settingsFunctionName" ng-model="formFields.settingsFunctionName" ng-trim="false" placeholder="{{codePressApp.template.functionName}}" ng-focus="showHelp('settingsFunctionName')" ng-blur="hideHelp()" data-no-lowercase="1" ng-trim="false" sanitize-title>
+              <p data-field="settingsFunctionName" class="hidden">The function used when generated the php code</p>
+            </md-input-container>
+
+            <md-input-container ng-if="codePressApp.template.textDomain">
+              <label for="settingsTextDomain" class="title" ng-mouseenter="showHelp('settingsTextDomain')" ng-mouseleave="hideHelp()">Text domain</label>
+              <input type="text" name="settingsTextDomain" id="settingsTextDomain" ng-model="formFields.settingsTextDomain" ng-trim="false" placeholder="{{codePressApp.template.textDomain || 'your-plugin-textdomain' }}" ng-focus="showHelp('settingsTextDomain')" ng-blur="hideHelp()" sanitize-title>
+              <p></p>
+            </md-input-container>
+
+          </div>
+      </div>
+      <div class="divider"></div>
+
+      <!-- Code -->
+      <div id="code" class="right-panel__code">
+        <div layout="row"><div flex class="md-title color-section-title" ><ng-md-icon class="color-svg" icon="code"></ng-md-icon>Code</div> <md-switch class="md-primary no-margin" ng-model="showCode" aria-label="Toggle code"></md-switch></div>
+        <div class="right-panel__code__entry slide-toggle" ng-show="showCode">
+          <div ng-hide="! codePressApp.template.formCheck || wordpress.$valid" class="md-whiteframe-1dp invalid-data bg-main-content">
+            The form contain errors. Please fill all the required fields.
+          </div>
+          <div class="right-panel__code__entry__wrapper" ng-show="! codePressApp.template.formCheck || wordpress.$valid">
+            <pre bg-scrollable class="right-panel__code__entry__wrapper__pre"><code class="language-php" ng-include="template()" id="source-code"></code></pre>
+            <md-button ngclipboard data-clipboard-target="#source-code" ngclipboard-success="showCopyDone(e, 'copy-clipboard', 'Code copied into the clipboard' )" class="md-raised copy-to-clipboard" ng-class="{'md-primary': ! codePressApp.isEmbedded, 'dark-icon' : codePressApp.isEmbedded}" ng-hide="codePressApp.isEmbedded">
+              <ng-md-icon icon="{{ _copyIcon || 'copy-clipboard' }}" options='{"duration": 500, "rotation": "none"}'></ng-md-icon>
+              Copy
+            </md-button>
+            <md-button class="md-raised md-primary md-warn copy-to-clipboard" ng-if="codePressApp.isEmbedded" ng-click="sendCodeTo('source-code')">
+              <ng-md-icon icon="mode_edit"></ng-md-icon>
+              Insert code
+            </md-button>
+          </div>
+        </div>
+      </div>
+      <div id="help">
+        <div layout="row"><div flex class="md-title color-section-title" ><ng-md-icon class="color-svg" icon="help_outline"></ng-md-icon>Help</div></div>
+
+        <div class="content">
+          <div class="help help-1">
+        		<div class="md-title help-title"></span></div>
+            <p class="help-content"></p>
+        	</div>
+
+          <div class="help help-2">
+            <div class="md-title help-title"></span></div>
+            <p class="help-content"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </md-sidenav>
+
+</div>

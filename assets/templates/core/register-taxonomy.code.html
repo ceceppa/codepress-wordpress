@@ -1,0 +1,59 @@
+<span ng-show="wordpress.$valid">
+
+function {{formFields.settingsFunctionName || codePressApp.template.functionName}}() {<span ng-show="cptShowLabels( 'labels' )">
+    $labels = array(
+        'name' => _x( '{{ formFields.ctName | escape }}', 'post type general name', '{{ formFields.settingsTextDomain || codePressApp.template.textDomain }}' ),<span ng-show="wordpress.ctSingularName.$modelValue.length">
+        'singular_name'              => _x( '{{ formFields.ctSingularName | escape }}', 'post type singular name', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-show="wordpress.ctMenuName.$modelValue.length">
+        'menu_name'                  => _x( '{{ formFields.ctMenuName | escape }}', 'admin menu', codePressApp.template.textDomain ),</span><span ng-show="wordpress.ctAllItems.$modelValue.length">
+        'all_items'                  => __( '{{ formFields.ctAllItems | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-show="wordpress.ctEditItem.$modelValue.length">
+        'edit_item'                  => __( '{{ formFields.ctEditItem | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-show="wordpress.ctViewItem.$modelValue.length">
+        'view_item'                  => __( '{{ formFields.ctViewItem | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-show="wordpress.ctUpdateItem.$modelValue.length">
+        'update_item'                => __( '{{ formFields.ctUpdateItem | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-show="wordpress.ctAddNewItem.$modelValue.length">
+        'add_new_item'               => __( '{{ formFields.ctAddNewItem | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-show="wordpress.ctNewItem.$modelValue.length">
+        'new_item_name'              => __( '{{ formFields.ctNewItem | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-show="wordpress.ctParentItem.$modelValue.length">
+        'parent_item'                => __( '{{ formFields.ctParentItem | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-show="wordpress.ctParentItemColon.$modelValue.length">
+        'parent_item_colon'          => __( '{{ formFields.ctParentItemColon | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-show="wordpress.ctSearchItems.$modelValue.length">
+        'search_items'               => __( '{{ formFields.ctSearchItems | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-show="wordpress.ctPopularItems.$modelValue.length">
+        'popular_items'              => __( '{{ formFields.ctPopularItems | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-show="wordpress.ctSeparateItems.$modelValue.length">
+        'separate_items_with_commas' => __( '{{ formFields.ctSeparateItems | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-show="wordpress.ctAddRemove.$modelValue.length">
+        'add_or_remove_items'        => __( '{{ formFields.ctAddRemove | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-show="wordpress.ctChooseFrom.$modelValue.length">
+        'choose_from_most_used'      => __( '{{ formFields.ctChooseFrom | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-show="wordpress.ctNotFound.$modelValue.length">
+        'not_found'                  => __( '{{ formFields.ctNotFound | escape }}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span>
+    );
+</span>
+<span ng-show="cptCapabilities()">
+    $capabilities = array(
+        {{cptCapabilities()}}
+    );
+</span>
+    $args = array(<span ng-show="wordpress.ctLabel.$modelValue.length">
+        'label' => __( '{{ formFields.ctLabel | escape }}', '{{ formFields.settingsTextDomain || codePressApp.template.textDomain }}' ),</span><span ng-show="wordpress.ctDescription.$modelValue">
+        'description' => __( '{{ formFields.ctDescription | escape }}', '{{ formFields.settingsTextDomain || codePressApp.template.textDomain }}' ),</span><span ng-show="wordpress.ctIsPublic.$modelValue">
+        'public' => true,</span><span ng-show="wordpress.ctIsPublic.$modelValue != wordpress.ctShowUi.$modelValue">
+        'show_ui' => {{ wordpress.ctShowUi.$modelValue ? 'true' : 'false' }},</span><span ng-show="wordpress.ctShowInMenu.$modelValue != wordpress.ctShowUi.$modelValue">
+        'show_in_menu' => {{ formFields.ctShowInMenu.$modelValue ? 'true' : 'false' }},</span><span ng-show="wordpress.ctShowInNavMenu.$modelValue != wordpress.ctIsPublic.$modelValue">
+        'show_in_nav_menus' => {{ formFields.ctShowInNavMenu.$modelValue ? 'true' : 'false' }},</span><span ng-show="wordpress.ctShowTagCloud.$modelValue != wordpress.ctShowUi.$modelValue">
+        'show_tagcloud' => {{ formFields.ctShowTagCloud.$modelValue ? 'true' : 'false' }},</span><span ng-show="wordpress.ctShowInQuickEdit.$modelValue != wordpress.ctShowUi.$modelValue">
+        'show_in_quick_edit' => {{ formFields.ctShowInQuickEdit.$modelValue ? 'true' : 'false' }},</span><span ng-show="wordpress.ctShowAdminColumn.$modelValue">
+        'show_admin_column' => true,</span><span ng-show="wordpress.ctHierarchical.$modelValue">
+        'hierarchical' => true,</span><span ng-show="wordpress.ctSort.$modelValue">
+        'sort' => true,</span><span ng-show="! wordpress.ctQueryVar.$modelValue">
+        'query_var' => false,</span><span ng-show="wordpress.ctQueryVar.$modelValue && wordpress.ctQueryVarString.$modelValue && wordpress.ctQueryVarString.$modelValue != wordpress.ctTaxonomy.$modelValue">
+        'query_var' => '{{wordpress.ctQueryVarString.$modelValue}}',</span><span ng-show="wordpress.ctShowInRest.$modelValue">
+        'show_in_rest' => true,</span><span ng-show="wordpress.ctRestControllerClass.$modelValue">
+        'rest_controller_class' => '{{formFields.ctRestControllerClass}}',</span><span ng-show="wordpress.ctRestBase.$modelValue && formFields.ctRestBase != formFields.ctPostTypeKey">
+        'rest_base' => '{{formFields.ctRestBase}}',</span><span ng-show="! formFields.ctRewrite">
+        'rewrite' => false,</span><span ng-show="formFields.ctRewrite && ctRewrite()">
+        'rewrite' => array( {{ctRewrite()}} ),</span><span ng-show="wordpress.ctMetaBoxCb.$modelValue">
+        'meta_box_cb' => '{{wordpress.ctMetaBoxCb.$modelValue}}',</span><span ng-show="wordpress.ctUpdateCount.$modelValue">
+        'update_count_callback' => '{{wordpress.ctUpdateCount.$modelValue}}',</span><span ng-show="cptShowLabels( 'labels' )">
+        'labels' => $labels,</span><span ng-show="cptCapabilities()">
+        'capabilities' => $capabilities,</span>
+    );
+
+    register_taxonomy( '{{ formFields.ctTaxonomy }}', '{{ formFields.ctObjectType }}', $args );
+}
+
+add_action( 'init', 'create_custom_taxonomy' );
+</span>
+<span ng-hide="wordpress.$valid">One or more fields contains invalid data</span>

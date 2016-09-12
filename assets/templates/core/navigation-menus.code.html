@@ -1,0 +1,15 @@
+<span ng-show="wordpress.$valid">
+function {{formFields.settingsFunctionName || codePressApp.template.functionName}}() {
+    $locations = array(
+        '{{formFields.menuName1}}' => __( '{{formFields.menuDescription1 | escape}}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),<span ng-show="wordpress.menuName2.$modelValue && wordpress.menuDescription2.$modelValue">
+        '{{formFields.menuName2}}' => __( '{{formFields.menuDescription2 | escape}}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-show="wordpress.menuName3.$modelValue && wordpress.menuDescription3.$modelValue">
+        '{{formFields.menuName3}}' => __( '{{formFields.menuDescription3 | escape}}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-show="wordpress.menuName4.$modelValue && wordpress.menuDescription4.$modelValue">
+        '{{formFields.menuName4}}' => __( '{{formFields.menuDescription4 | escape}}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span><span ng-show="wordpress.menuName5.$modelValue && wordpress.menuDescription5.$modelValue">
+        '{{formFields.menuName5}}' => __( '{{formFields.menuDescription5 | escape}}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),</span>
+    );
+
+    register_nav_menus( $locations );
+}
+
+add_action( 'after_setup_theme', '{{formFields.settingsFunctionName || codePressApp.template.functionName}}' );
+</span>

@@ -1,0 +1,208 @@
+<div id="cpt-preview" class="content language">
+  <!-- $taxonomy -->
+  <span class="two-column form-row">
+    <label for="ctTaxonomy" class="required label-help" ng-mouseenter="showHelp('ctTaxonomy')" ng-mouseleave="hideHelp()">$taxonomy</label>
+    <input type="text" name="ctTaxonomy" id="ctTaxonomy" placeholder="genre" ng-required="true" ng-model="formFields.ctTaxonomy" ng-focus="showHelp('ctTaxonomy')" ng-blur="hideHelp()" ng-change="updateField()" ng-trim="false" maxlength="32"  sanitize-title>
+    <p class="required">
+      The name of the taxonomy. Name should only contain lowercase letters and the underscore character, and not be more than 32 characters long (database structure restriction).<br><i class=\"indent\">Default: None</i>
+    </p>
+    <label for="ctTaxonomy" class="hidden"></label>
+    <span class="required"></span>
+  </span>
+
+  <!-- $object_type -->
+  <span class="two-column form-row">
+    <label for="ctObjectType" class="required label-help title" ng-mouseenter="showHelp('ctObjectType')" ng-mouseleave="hideHelp()">$object_type</label>
+    <input type="text" name="ctObjectType" id="ctObjectType" ng-model="formFields.ctObjectType" ng-trim="false" placeholder="book" ng-required="true" ng-focus="showHelp('ctObjectType')" ng-blur="hideHelp()" sanitize-title>
+    <p>
+      Name of the object type for the taxonomy object. Object-types can be built-in Post Type or any Custom Post Type that may be registered.<br>
+      <i class=\"indent\">Default: None</i><br><br>Built-in Post Types:
+      <span class=\"help-li strong\">post</span><span class=\"help-li strong\">page</span>
+      <span class=\"help-li strong\">attachment</span>
+      <span class=\"help-li strong\">revision</span>
+      <span class=\"help-li strong\">nav_menu_item</span>
+      <br><br>Custom Post Types:<span class=\"help-li\"><strong>{custom_post_type}</strong> - Custom Post Type names must be all in lower-case and without any spaces.</span>
+      <span class=\"help-li\"><strong>null</strong> - Setting explicitly to null registers the taxonomy but doesn't associate it with any objects, so it won't be directly available within the Admin UI. You will need to manually register it using the 'taxonomy' parameter (passed through $args) when registering a custom post_type (see register_post_type()), or using register_taxonomy_for_object_type().</span>
+    </p>
+  </span>
+  <div class="clear"></div>
+
+  <!--  Tabs -->
+  <div class="col-md-12 row tabs">
+      <ul class="tabs-wrap col-md-12">
+        <li ng-click="cptTab = 1" ng-class="( cptTab == 1 ) ? 'active' : ''">Basic</li>
+        <li ng-click="cptTab = 2" ng-class="( cptTab == 2 ) ? 'active' : ''">Visibility</li>
+        <li ng-click="cptTab = 3" ng-class="( cptTab == 3 ) ? 'active' : ''">Labels</li>
+        <li ng-click="cptTab = 4" ng-class="( cptTab == 4 ) ? 'active' : ''">Callbacks</li>
+        <li ng-click="cptTab = 6" ng-class="( cptTab == 5 ) ? 'active' : ''">Capabilities</li>
+      </ul>
+  </div>
+
+  <!-- Basic -->
+  <div class="tab-content row" ng-init="cptTab = 1">
+    <div class="row row-wp-admin-menu content" ng-show="cptTab == 1">
+      <div class="col-md-12">
+        <!-- Label -->
+        <span class="form-row">
+          <label for="ctLabel" class="label-help" ng-mouseenter="showHelp('ctLabel')" ng-mouseleave="hideHelp()">Label</label>
+          <input type="text" name="ctLabel" id="ctLabel" placeholder="{{formFields.hierarchical ? 'Categories' : 'Tags'}}" ng-required="false" ng-model="formFields.ctLabel" ng-focus="showHelp('ctLabel')" ng-blur="hideHelp()">
+          <p class="required">A plural descriptive name for the taxonomy marked for translation.<br><i class=\"indent\">Default: overridden by $labels->name</i></p>
+          <label for="ctLabel" class="hidden"></label>
+          <span class=""></span>
+        </span>
+      </div>
+      <div class="col-md-12">
+        <!-- Description -->
+        <span class="form-row">
+          <label for="ctDescription" class="label-help" ng-mouseenter="showHelp('ctDescription')" ng-mouseleave="hideHelp()">Description</label>
+          <textarea type="text" name="ctDescription" id="ctDescription" ng-required="false" ng-model="formFields.ctDescription" ng-focus="showHelp('ctDescription')" ng-blur="hideHelp()"></textarea>
+          <p class="required">Include a description of the taxonomy</p>
+          <label for="ctDescription" class="hidden"></label>
+          <span class=""></span>
+        </span>
+      </div>
+
+      <!-- Rewrite -->
+      <div class="form-row col-md-12 padding-top">
+        <label for="ctRewrite" class="checkbox label-help title" ng-mouseenter="showHelp('ctRewrite')" ng-mouseleave="hideHelp()">rewrite</label>
+        <input type="checkbox" name="ctRewrite" id="ctRewrite" value="1" ng-model="formFields.ctRewrite" ng-init="formFields.ctRewrite=true" ng-change="changeDefaults('ctRewrite', true)">
+        <p>
+          Set to false to prevent automatic URL rewriting a.k.a. \"pretty permalinks\". Pass an $args array to override default URL settings for permalinks as outlined below:<br><i class=\"indent\">Default: true</i><br><br><strong>Note:</strong> You may need to flush the rewrite rules after changing this. You can do it manually by going to the Permalink Settings page and re-saving the rules -- you don't need to change them -- or by calling $wp_rewrite->flush_rules(). You should only flush the rules once after the taxonomy has been created, not every time the plugin/theme loads.
+        </p>
+        <label for="ctRewrite" class="check pull-right"></label>
+      </div>
+
+      <div class="col-md-12 ng-show-animation" ng-show="formFields.ctRewrite">
+        <span class="ng-scope col-md-6">
+          <label for="ctRewriteSlug" class="checkbox label-help" ng-mouseenter="showHelp('ctRewriteSlug')" ng-mouseleave="hideHelp()">Slug</label>
+          <input type="text" name="ctRewriteSlug" id="ctRewriteSlug" ng-model="formFields.ctRewriteSlug" ng-focus="showHelp('ctRewriteSlug')" ng-blur="hideHelp()" placeholder="{{formFields.ctTaxonomy}}">
+          <p>Used as pretty permalink text (i.e. /tag/) - defaults to $taxonomy (taxonomy's name slug)</p>
+        </span>
+
+        <dl class="bpg-dl-inline col-md-6" ng-repeat="field in fields.rewrite">
+          <dt>
+            <label for="ctRewrite{{ field.key }}" class="checkbox label-help" ng-mouseenter="showHelp('ctRewrite' + field.key)" ng-mouseleave="hideHelp()">{{field.label}}</label>
+          </dt>
+
+          <dd>
+            <input type="checkbox" name="ctRewrite{{ field.key }}" id="ctRewrite{{ field.key }}" value="1" ng-model="formFields[field.key]" ng-init="formFields[field.key] = field.checked" placeholder="{{field.label}}">
+            <p data-ng-bind-html="field.help"></p>
+            <label for="{{ field.key }}" class=""></label>
+          </dd>
+        </dl>
+
+        <div class="clear">
+          <div class="menu-item cpt-menu col-md-2">
+            <label class="label-help" ng-mouseenter="showHelp('checkEpMask')" ng-mouseleave="hideHelp()">ep_mask</label>
+          </div>
+
+          <div class="menu-item cpt-ep-mask col-md-4 relative">
+            <input type="hidden" name="ctRewriteEpMask" id="ctRewriteEpMask" ng-model="formFields.ctRewriteEpMask" ng-init="formFields.ctRewriteEpMask = 'EP_NONE'">
+            <label for="checkEpMask" class="select styled" name="" ng-mouseenter="showHelp('checkEpMask')" ng-mouseleave="hideHelp()">{{ formFields.ctRewriteEpMask }}</label>
+            <input type="checkbox" name="checkEpMask" id="checkEpMask" value="" class="select hidden">
+            <p>
+              const As of 3.4 Assign an endpoint mask for this post type. <br/>
+              For more info see <a href=\"https://codex.wordpress.org/Function_Reference/register_post_type#rewrite\" target=\"_blank\">Codex page</a>.
+              <span class=\"help-li\">If not specified and permalink_epmask is set, inherits from permalink_epmask</span>
+              <span class=\"help-li\">If not specified and permalink_epmask is not set, defaults to EP_PERMALINK</span>
+            </p>
+            <div class="wp-combo">
+              <ul class="options perfect-scrollbar">
+                <li class="option" ng-click="formFields.ctRewriteEpMask = 'EP_NONE'"><label for="checkEpMask">EP_NONE</label></li>
+                <li class="option" ng-click="formFields.ctRewriteEpMask = 'EP_PERMALINK'"><label for="checkEpMask">EP_PERMALINK</label></li>
+                <li class="option" ng-click="formFields.ctRewriteEpMask = 'EP_ATTACHMENT'"><label for="checkEpMask">EP_ATTACHMENT</label></li>
+                <li class="option" ng-click="formFields.ctRewriteEpMask = 'EP_DATE'"><label for="checkEpMask">EP_DATE</label></li>
+                <li class="option" ng-click="formFields.ctRewriteEpMask = 'EP_YEAR'"><label for="checkEpMask">EP_YEAR</label></li>
+                <li class="option" ng-click="formFields.ctRewriteEpMask = 'EP_MONTH'"><label for="checkEpMask">EP_MONTH</label></li>
+                <li class="option" ng-click="formFields.ctRewriteEpMask = 'EP_DAY'"><label for="checkEpMask">EP_DAY</label></li>
+                <li class="option" ng-click="formFields.ctRewriteEpMask = 'EP_ROOT'"><label for="checkEpMask">EP_ROOT</label></li>
+                <li class="option" ng-click="formFields.ctRewriteEpMask = 'EP_COMMENTS'"><label for="checkEpMask">EP_COMMENTS</label></li>
+                <li class="option" ng-click="formFields.ctRewriteEpMask = 'EP_SEARCH'"><label for="checkEpMask">EP_SEARCH</label></li>
+                <li class="option" ng-click="formFields.ctRewriteEpMask = 'EP_CATEGORIES'"><label for="checkEpMask">EP_CATEGORIES</label></li>
+                <li class="option" ng-click="formFields.ctRewriteEpMask = 'EP_TAGS'"><label for="checkEpMask">EP_TAGS</label></li>
+                <li class="option" ng-click="formFields.ctRewriteEpMask = 'EP_AUTHORS'"><label for="checkEpMask">EP_AUTHORS</label></li>
+                <li class="option" ng-click="formFields.ctRewriteEpMask = 'EP_PAGES'"><label for="checkEpMask">EP_PAGES</label></li>
+                <li class="option" ng-click="formFields.ctRewriteEpMask = 'EP_ALL_ARCHIVES'"><label for="checkEpMask">EP_ALL_ARCHIVES</label></li>
+                <li class="option" ng-click="formFields.ctRewriteEpMask = 'EP_ALL'"><label for="checkEpMask">EP_ALL</label></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+      <!--  Visibility -->
+      <div class="row row-wp-admin-menu" ng-show="cptTab == 2">
+        <div class="col-md-12">
+          <dl class="bpg-dl-inline no-clear col-md-6" ng-repeat="field in fields.settings">
+            <dt>
+              <label for="{{ field.name }}" class="{{ field.required ? 'required' : '' }} label-help" ng-mouseenter="showHelp(field.name)" ng-mouseleave="hideHelp()">{{field.label}}</label>
+            </dt>
+
+            <dd>
+              <input type="{{ field.type }}" name="{{ field.name }}" id="{{ field.name }}" placeholder="{{ field.placeholder }}" ng-required="{{ field.required }}" ng-model="formFields[field.name]" ng-focus="showHelp(field.name)" ng-blur="hideHelp()" ng-init="formFields[field.name]=field.checked" data-default="{{field.default}}" ng-change="changeDefaults()" class="bg-unset">
+              <p class="{{ field.required ? 'required' : '' }}" data-ng-bind-html="field.p"></p>
+              <label for="{{ field.name }}" class="{{ field.type == 'checkbox' ? '' : 'hidden' }}"></label>
+              <span class="{{ field.required ? 'required' : '' }}"></span>
+            </dd>
+          </dl>
+
+          <dl class="bpg-dl-inline no-clear col-md-6">
+            <dt>
+              <label for="ctQueryVar" class=" label-help" ng-mouseenter="showHelp('ctQueryVar')" ng-mouseleave="hideHelp()">query_var</label>
+            </dt>
+
+            <dd>
+              <div class="pull-right">
+                <input type="checkbox" name="ctQueryVar" id="ctQueryVar" placeholder="" ng-required="false" ng-model="formFields[ctQueryVar]" ng-focus="showHelp(ctQueryVar)" ng-blur="hideHelp()" ng-init="formFields[ctQueryVar]=true" data-default="">
+                <p>False to disable the query_var, set as string to use custom query_var instead of default which is $taxonomy, the taxonomy's \"name\".<br><i class=\"indent\">Default: $taxonomy</i></p>
+                <label for="ctQueryVar" class=""></label>
+                <span class=""></span>
+              </div>
+              <div class="clear full-width" ng-show="formFields[ctQueryVar]">
+                <input type="text" name="ctQueryVarString" id="ctQueryVarString" ng-focus="showHelp(ctQueryVar)" ng-blur="hideHelp()" ng-model="formFields.ctQueryVarString" placeholder="{{ formFields.ctTaxonomy || '$taxonomy' }}">
+              </div>
+            </dd>
+          </dl>
+        </div>
+    </div>
+
+    <!-- Labels -->
+    <div class="row row-wp-admin-menu" ng-show="cptTab == 3">
+      <div class="col-md-6 fields" ng-repeat="field in fields.labels" ng-mouseenter="showHelp(field.name)" ng-mouseleave="hideHelp()" ng-hide="formFields.hierarchical && field.noHierarchical">
+        <label for="{{ field.name }}" class="{{ field.required ? 'required' : '' }} label-help">{{ field.label}}</label>
+        <input type="{{ field.type }}" name="{{ field.name }}" id="{{ field.name }}" placeholder="{{ ( formFields.hierarchical && field.placeholderCategory ) ? field.placeholderCategory : field.placeholder }}" ng-required="{{ field.required }}" ng-model="formFields[field.name]" ng-focus="showHelp(field.name)" ng-blur="hideHelp()" ng-value="field.value" ng-if=" ! field.defaultPlaceholder" class="labels">
+        <input type="{{ field.type }}" name="{{ field.name }}" id="{{ field.name }}" placeholder="{{ formFields[ field.defaultPlaceholder ] || ( ( formFields.hierarchical && field.placeholderCategory ) ? field.placeholderCategory : field.placeholder ) }}" ng-required="{{ field.required }}" ng-model="formFields[field.name]" ng-focus="showHelp(field.name)" ng-blur="hideHelp()" ng-value="field.value" ng-if="field.defaultPlaceholder" class="labels">
+        <p class="{{ field.required ? 'required' : '' }}" data-ng-bind-html="field.p"></p>
+        <label for="{{ field.name }}" class="{{ field.type == 'checkbox' ? '' : 'hidden' }}"></label>
+        <span class="{{ field.required ? 'required' : '' }}"></span>
+      </div>
+    </div>
+
+    <!-- Callbacks -->
+    <div class="row row-wp-admin-menu" ng-show="cptTab == 4">
+      <div class="col-md-6 fields" ng-repeat="field in fields.callbacks">
+        <label for="{{ field.name }}" class="{{ field.required ? 'required' : '' }} label-help" ng-mouseenter="showHelp(field.name)" ng-mouseleave="hideHelp()">{{ field.label }}</label>
+        <input type="{{ field.type }}" name="{{ field.name }}" id="{{ field.name }}" placeholder="{{ field.placeholder }}" ng-required="{{ field.required }}" ng-model="formFields[field.name]" ng-focus="showHelp(field.name)" ng-blur="hideHelp()" ng-value="field.value">
+        <p class="{{ field.required ? 'required' : '' }}" data-ng-bind-html="field.p"></p>
+        <label for="{{ field.name }}" class="{{ field.type == 'checkbox' ? '' : 'hidden' }}"></label>
+        <span class="{{ field.required ? 'required' : '' }}"></span>
+      </div>
+    </div>
+
+    <!-- Capabilities -->
+    <div class="row row-wp-admin-menu" ng-show="cptTab == 6">
+      <div class="col-md-6 fields-capabilities" ng-repeat="field in fields.capabilities">
+        <span class="form-row ng-scope">
+          <label for="{{ field.name }}" class="">{{ field.label }}</label>
+          <input type="text" name="{{ field.name }}" id="{{ field.name }}" placeholder="{{ field.placeholder }}" ng-model="formFields[field.name]" ng-trim="false" sanitize-title>
+          <p class=""></p>
+        </span>
+      </div>
+
+    </div>
+
+  </div>
+</div>

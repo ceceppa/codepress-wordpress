@@ -1,0 +1,83 @@
+/**
+ * Add the meta box on the specified pages
+ */
+add_action( 'add_meta_boxes', '{{formFields.settingsFunctionName || codePressApp.template.functionName}}' );
+function {{formFields.settingsFunctionName || codePressApp.template.functionName}}() {
+    $screens = array('{{mergeAndJoin('screen', 'customSlugs', "', '", ',')}}');
+    foreach ( $screens as $screen ) {
+        add_meta_box(
+            '{{formFields.id | escape}}',
+            __( '{{formFields.title | escape}}', '{{formFields.settingsTextDomain || codePressApp.template.textDomain}}' ),
+            '{{formFields.callback}}',
+            $screen,
+            '{{formFields.context | lowercase}}',
+            '{{formFields.priority | lowercase}}'<span ng-show="wordpress.callbackArgs.$modelValue.length">,
+            {{formFields.callbackArgs}}</span>
+        );
+    }
+}
+
+/*
+ * Utility function to retrieve the field value
+ *
+ * Usage: {{formFields.id | nodash}}_get_meta( '{{formFields.id}}_[field_id]', '[default value]' );
+ */
+function {{formFields.id | nodash}}_get_meta( $field_id, $default ) {
+    global $post;
+
+    $value = get_post_meta( $post->ID, $field_id, true );
+
+    if( empty( $value ) ) {
+        return $default;
+    } else {
+        return is_array( $value ) ? stripslashes_deep( $value ) : stripslashes( wp_kses_decode_entities( $value ) );
+    }
+}
+
+/**
+ * Rendering the Meta Box
+ *
+ * This function print out the meta box content.*
+ *
+<span ng-show="formFields.customSlugs"> * NOTE: To render the metabox in a custom page use the following code:
+ *
+ *  &lt;?php do_meta_boxes( '{{formFields.customSlugs}}', 'advanced', null ); ?&gt;</span>
+ */
+function {{formFields.callback}}( $post ) {
+    wp_nonce_field( '_{{formFields.id}}_nonce', '{{formFields.id}}_nonce' );
+
+    <div ng-show="wordpress.description.$modelValue.length">&lt;p&gt;{{formFields.description}}&lt;/p&gt;</div>
+    <span ng-repeat="field in fields.dynamicFields">${{formFields[field.name + 'Id']}} = {{formFields.id | nodash}}_get_meta( '{{formFields[field.name + 'Id']}}', <span ng-hide="field.type=='select' || field.type == 'radio' || field.type == 'checkbox'">'{{formFields[field.defaultValue] | escape}}'</span><span ng-show="field.type == 'select' || field.type == 'radio'">'{{formFields[field.name + 'Option']}}'</span><span ng-show="field.type == 'checkbox'">{{formFields[field.defaultValue] ? '1' : "''"}}</span> );</span>
+?&gt;<span ng-repeat="field in fields.dynamicFields">
+    &lt;p&gt;<span ng-hide="field.type == 'checkbox'">
+        &lt;label for="{{formFields[field.name + 'Id']}}"&gt;&lt;?php _e( '{{formFields[field.titleModel] | escape}}:', '{{formFields.settingsTextDomain || 'theme-slug'}}' ); ?&gt;&lt;/label&gt;</span>
+        <span ng-hide="field.type == 'select' || field.type=='radio' || field.type == 'color'">&lt;input class="widefat" id="{{formFields[field.name + 'Id']}}" name="{{formFields[field.name + 'Id']}}" type="{{field.type}}" <span ng-if="field.type != 'checkbox'">value="&lt;?php echo ${{formFields[field.name + 'Id']}} ?&gt;"</span><span ng-if="field.type == 'checkbox'">value="1" &lt?php checked( ${{formFields[field.name + 'Id']}}, 1 );?&gt;</span>&gt;</span><span ng-show="field.type == 'color'">
+        &lt;input class="my-color-field" id="{{formFields[field.name + 'Id']}}" name="{{formFields[field.name + 'Id']}}" type="text" value="&lt;?php echo ${{formFields[field.name + 'Id']}} ?&gt;" data-default-color="{{formFields[field.defaultValue]}}" &gt;</span><span ng-if="field.type == 'select'" class="my-color">
+        &lt;select class="widefat" id="{{formFields[field.name + 'Id']}}" name="{{formFields[field.name + 'Id']}}"><span ng-repeat="option in field.options">
+            &lt;option name="{{option.key}}"<span ng-show="formFields[field.name + 'Option'] == option.key" class="ng-animate-width"> selected="selected"</span>&gt;{{option.value}}&lt;/option&gt;</span>
+        &lt;select&gt;</span><span ng-if="field.type == 'radio'">
+        <span ng-repeat="option in field.options">&lt;label&gt;
+            &lt;input type="radio" id="{{formFields[field.name + 'Id']}}" name="{{formFields[field.name + 'Id']}}[]" value="{{option.key}}" &lt;?php checked( ${{formFields[field.name + 'Id']}}, '{{option.key}}' ) ?&gt; &gt;
+            {{option.value}}
+        &lt;/label&gt; </span></span>
+        <span ng-show="field.type == 'checkbox'">&lt;label for="{{formFields[field.name + 'Id']}}"&gt;&lt;?php _e( '{{formFields[field.titleModel]}}:', '{{formFields.settingsTextDomain || 'theme-slug'}}' ); ?&gt;&lt;/label&gt;</span>
+    &lt;/p&gt;</span>
+    <span ng-if="fieldsContain(fields.dynamicFields, 'type', 'color')">&lt;script&gt;(function ($) { $(function () { $('.my-color-field').wpColorPicker(); }); }(jQuery));&lt;/script&gt;</span>
+&lt;?php
+}
+
+/**
+ * Save the fields value
+ */
+function {{formFields.id | nodash}}_meta_save( $post_id ) {
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
+    if ( ! isset( $_POST['{{formFields.id}}_nonce'] ) || ! wp_verify_nonce( $_POST['{{formFields.id}}_nonce'], '_{{formFields.id}}_nonce' ) ) return;
+    if ( ! current_user_can( 'edit_post', $post_id ) ) return;
+
+<div ng-repeat="field in fields.dynamicFields">
+    if ( isset( $_POST['{{formFields[field.name + 'Id']}}'] ) )
+        update_post_meta( $post_id, '{{formFields[field.name + 'Id']}}', esc_attr( $_POST['{{formFields[field.name + 'Id']}}'] ) );
+</div>
+}
+
+add_action( 'save_post', '{{formFields.id | nodash}}_meta_save' );

@@ -1,0 +1,37 @@
+<div class="browser md-padding">
+  <div class="browser__header">
+    <div class="browser__header__tabs">
+      <div class="browser__header__tabs__tab"><span class="pageTitle browser__header__tabs__tab__label highlight">{{formFields.pageTitle || 'My Page'}}</span> &lsaquo; ...</div>
+    </div>
+
+    <div class="browser__header__controls">
+      <div class="browser__header__controls__control"></div>
+      <div class="browser__header__controls__control"></div>
+      <div class="browser__header__controls__control"></div>
+    </div>
+  </div>
+  <div class="browser__bar" layout="row">
+    <div class="browser__bar__button"><ng-md-icon icon="chevron_left"></ng-md-icon></div>
+    <div class="browser__bar__button browser__bar__button--inactive"><ng-md-icon icon="chevron_right"></ng-md-icon></div>
+    <div class="browser__bar__address" flex>http://example.com/wp-admin/admin.php?page=<span class="menuSlug highlight">{{formFields.menuSlug || 'my-page-slug'}}</span></div>
+    <div class="browser__bar__button"><ng-md-icon icon="menu"></ng-md-icon></div>
+  </div>
+  <div class="browser__content">
+    <div class="wp-admin-bar">
+      <ng-md-icon icon="wordpress" class="wp-admin-bar__icon"></ng-md-icon>
+      <div class="browser__content__item wp-admin-bar__item inline"><span class="browser__content__item__empty wp-admin-bar__item__empty"></span></div>
+      <div class="wp-admin-bar__user inline align-right wp-admin-bar__icon">
+        <ng-md-icon icon="person"></ng-md-icon>
+        <div class="browser__content__item wp-admin-bar__item inline"><span class="browser__content__item__empty wp-admin-bar__item__empty"></span></div>
+      </div>
+    </div>
+    <div class="wp-admin-menu">
+      <div class="wp-admin-menu__item browser__content__item"><span class="browser__content__item__empty"></span></div>
+      <div class="wp-admin-menu__item browser__content__item"><span class="browser__content__item__empty"></span></div>
+      <div class="wp-admin-menu__item browser__content__item"><span class="browser__content__item__empty"></span></div>
+      <div class="wp-admin-menu__item browser__content__item"><span class="menuIcon highlight"><span class="dashicons" ng-class="formFields.iconUrlDashicon"></span></span>&nbsp;<span class="menuTitle highlight">{{formFields.menuTitle || 'Menu Title'}}</span></div>
+      <div class="wp-admin-menu__item browser__content__item"><span class="browser__content__item__empty"></span></div>
+      <div class="wp-admin-menu__item browser__content__item"><span class="browser__content__item__empty"></span></div>
+    </div>
+  </div>
+</div>

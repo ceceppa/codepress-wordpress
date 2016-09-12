@@ -1,0 +1,23 @@
+<span ng-show="wordpress.$valid">//USAGE: [{{formFields.tag}}]
+function {{formFields.settingsFunctionName || codePressApp.template.functionName}}( $atts, $content = '' ) {
+    $atts = shortcode_atts(
+    array(<span ng-show="wordpress.attrName1.$modelValue">
+        '{{formFields.attrName1}}' => '{{formFields.attrValue1 | escape}}',</span><span ng-show="wordpress.attrName2.$modelValue">
+        '{{formFields.attrName2}}' => '{{formFields.attrValue2 | escape}}',</span><span ng-show="wordpress.attrName3.$modelValue">
+        '{{formFields.attrName3}}' => '{{formFields.attrValue3 | escape}}',</span><span ng-show="wordpress.attrName4.$modelValue">
+        '{{formFields.attrName4}}' => '{{formFields.attrValue4 | escape}}',</span><span ng-show="wordpress.attrName5.$modelValue">
+        '{{formFields.attrName5}}' => '{{formFields.attrValue5 | escape}}',</span>
+    ),
+    $atts<span ng-show="formFields.shortcode == 'tag'">,
+    '{{formFields.tag}}'</span><span ng-show="formFields.shortcode == 'custom'">,
+    '{{formFields.customName}}'</span>
+    );
+
+    //TODO: Add our own code here.
+    //NOTE: The function have to return text, doesn't have to print anything.
+
+    //return $atts['foo'];
+}
+
+add_shortcode( '{{formFields.tag}}', '{{formFields.settingsFunctionName || codePressApp.template.functionName}}' );
+</span>

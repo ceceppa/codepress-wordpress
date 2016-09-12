@@ -1,0 +1,174 @@
+.browser {
+  $color__tab: #EFF0F1;
+
+  &__header {
+    $height: 23px;
+
+    background: #65B4DF;
+    height: $height;
+
+    &__tabs {
+      display: inline-block;
+      vertical-align: top;
+      width: calc(100% - 100px);
+      height: $height;
+
+      &__tab {
+        display: inline-block;
+        vertical-align: bottom;
+        font-size: 12px;
+        background: $color__tab;
+        margin: 0 10px;
+        height: $height - 2px;
+
+        &::before {
+          content: '';
+          display: inline-block;
+          vertical-align: top;
+          width: 0;
+          height: 0;
+          border-style: solid;
+          border-width: 0 0 #{$height - 2} 10px;
+          margin-left: -10px;
+          border-color: transparent transparent $color__tab transparent;
+        }
+
+        &::after {
+          content: '';
+          display: inline-block;
+          vertical-align: top;
+          width: 0;
+          height: 0;
+          border-style: solid;
+          border-width: #{$height - 2} 0 0 10px;
+          position: relative;
+          left: 10px;
+          border-color: transparent transparent transparent $color__tab;
+        }
+
+        &__label {
+          padding: 0 10px;
+          line-height: #{$height - 2};
+        }
+      }
+    }
+
+    &__controls {
+      display: inline-block;
+      vertical-align: middle;
+      width: 90px;
+      text-align: right;
+      height: 12px;
+
+      &__control {
+        background: $color__tab;
+        display: inline-block;
+        vertical-align: top;
+        height: 12px;
+        width: 12px;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  &__bar {
+    background: $color__tab;
+    border-top: 1px solid darken($color__tab, 35%);
+    font-size: 12px;
+    padding: 8px 5px;
+
+    &__button {
+      $width: 22px;
+      $height:22px;
+
+      width: $width;
+      height: $height;
+      margin: 0 1px;
+
+      &--inactive {
+        svg {
+          fill: darken($color__tab, 20%);
+        }
+      }
+    }
+
+    &__address {
+      display: inline-block;
+      margin-left: 5px;
+      line-height: 22px;
+      background: #fff;
+      padding: 0 10px;
+    }
+  }
+
+  &__content {
+    font-size: 12px;
+
+    &__item {
+      min-height: 24px;
+      padding: 0 10px;
+
+      &__empty {
+        display: block;
+        background: lighten($color__admin_menu, 5%);
+        width: 100%;
+        height: 4px;
+        position: relative;
+        top: 8px;
+
+        &.highlight::before {
+          margin-top: -6px;
+          margin-left: -8px;
+          width: 94%;
+        }
+      }
+    }
+  }
+}
+
+.wp-admin-bar {
+  background: $color__admin_menu;
+  height: 24px;
+  padding: 4px;
+
+  &__icon {
+    svg {
+      fill: lighten($color__admin_menu, 20%);
+    }
+  }
+
+  &__item {
+    min-width: 100px;
+
+    &__empty {
+      top: 11px;
+    }
+  }
+}
+
+
+.highlight {
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+
+  &::before {
+    content: '';
+    border: 1px solid red;
+    width: 100%;
+    height: 100%;
+    height: 18px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    padding: 0 10px;
+    @include transform(scale(1.4));
+    @include transition(all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275));
+  }
+
+  &.highlighted::before {
+    opacity: 1;
+    @include transform(scale(1));
+  }
+}

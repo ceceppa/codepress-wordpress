@@ -1,0 +1,26 @@
+<md-toolbar md-scroll-shrink class="md-whiteframe-1dp fixed">
+	<div class="md-toolbar-tools">
+		<md-input-container layout="row" class="layout-align-start-center">
+				<label class="color-navigation-text">Search</label>
+				<input type="text" placeholder="Search" ng-model="searchTemplate">
+		</md-input-container>
+	</div>
+</md-toolbar>
+
+<div class="wordpress-all-items" ng-controller="WordPressController" flex>
+	<div ng-repeat="categories in templates.templates" class="template-items">
+		<div class="md-title mt-32 color-section-title padding-top">
+			<ng-md-icon icon="{{categories.category.icon}}" class="color-svg"></ng-md-icon>
+			<span>{{categories.category.title}}</span>
+		</div>
+
+	  <div layout="row" class="wp-items layout-wrap">
+	    <md-button layout="column" class="md-raised md-default-theme wp-items__item" flex="25" ng-repeat="template in categories.items | filter:searchTemplate" href="#/generators/{{template.slug}}" aria-label="{{template.title}}">
+	      <div class="wp-items__item__image" style="background: url({{template.thumbnail}}) top left no-repeat">
+	      </div>
+	      <div class="md-title wp-items__item__title padding-10" ng-bind-html="template.title"></div>
+	      <p class="wp-items__item__info" ng-bind-html="template.info" flex></p>
+	    </md-button>
+	  </div>
+	</div>
+</div>

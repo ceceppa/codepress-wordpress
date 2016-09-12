@@ -1,0 +1,16 @@
+<span ng-show="wordpress.$valid">
+function {{formFields.settingsFunctionName || codePressApp.template.functionName}}() {
+    <div ng-repeat="n in [1,2,3,4,5]"><span ng-show="formFields['sidebarId' + n]">register_sidebar( array (<span ng-show="formFields['sidebarName' + n]">
+        'name' => __( '{{formFields['sidebarName' + n]}}', '{{ formFields.settingsTextDomain || codePressApp.template.textDomain }}' ),</span>
+        'id' => '{{formFields['sidebarId' + n]}}',<span ng-show="formFields['sidebarDescription' + n]">
+        'description' => __( '{{formFields['sidebarDescription' + n]}}', '{{ formFields.settingsTextDomain || codePressApp.template.textDomain }}' ),</span><span ng-show="formFields['sidebarClass' + n]">
+        'class' => '{{formFields['sidebarClass' + n]}}',</span><span ng-show="formFields['sidebarBeforeWidget' + n]">
+        'before_widget' => '{{formFields['sidebarBeforeWidget' + n]}}',</span><span ng-show="formFields['sidebarAfterWidget' + n]">
+        'after_widget' => '{{formFields['sidebarAfterWidget' + n]}}',</span><span ng-show="formFields['sidebarBeforeTitle' + n]">
+        'before_title' => '{{formFields['sidebarAfterWidget' + n]}}',</span><span ng-show="formFields['sidebarAfterTitle' + n]">
+        'after_title' => '{{formFields['sidebarAfterTitle' + n]}}',</span>
+  ) ); </span></div>
+}
+
+add_action( 'widgets_init', '{{formFields.settingsFunctionName || codePressApp.template.functionName}}' );
+</span>

@@ -1,0 +1,28 @@
+<span ng-show="wordpress.$valid">
+function {{formFields.settingsFunctionName || codePressApp.template.functionName}}() {
+    global $wp_admin_bar;
+<span ng-show="cptShowLabels('meta')">
+    $meta = array(<span ng-show="formFields.abMetaHtml">
+        'html' => '{{formFields.abMetaHtml | escape}}',</span><span ng-show="formFields.abMetaClass">
+        'class' => '{{formFields.abMetaClass | escape}}',</span><span ng-show="formFields.abMetaRel">
+        'rel' => '{{formFields.abMetaRel | escape}}',</span><span ng-show="formFields.abMetaOnClick">
+        'onclick' => '{{formFields.abMetaOnClick | escape}}',</span><span ng-show="formFields.abMetaTarget">
+        'target' => '{{formFields.abMetaTarget | escape}}',</span><span ng-show="formFields.abMetaTitle">
+        'title' => '{{formFields.abMetaTitle | escape}}',</span><span ng-show="formFields.abMetaTabIndex">
+        'tabindex' => '{{formFields.abMetaTitle | escape}}'</span>
+    );
+</span>
+    $args = array(
+        'id' => '{{formFields.abId}}',<span ng-show="formFields.abTitle">
+        'title' => __( '{{formFields.abTitle | escape}}', '{{ formFields.settingsTextDomain || codePressApp.template.textDomain}}'),</span><span ng-show="formFields.abParent">
+        'parent' => '{{formFields.abParent}}',</span><span ng-show="formFields.abHref">
+        'href' => '{{formFields.abHref}}',</span><span ng-show="formFields.abGroup">
+        'group' => true,</span><span ng-show="cptShowLabels('meta')">,
+        'meta' => $meta</span>
+    );
+
+    $wp_admin_bar->add_menu( $args );
+}
+
+add_action( 'wp_before_admin_bar_render', '{{formFields.settingsFunctionName || codePressApp.template.functionName}}', 999 );
+</span>

@@ -1,0 +1,126 @@
+<div layout="row" class="md-padding">
+  <div layout="column" flex="99">
+      <div class="widget wp-mbox open">
+        <div class="widget-top">
+          <div class="widget-title wp-widget__widget__title wp-widget__sidebar__title wp-mbox__title">
+            <md-input-container md-no-float class="md-block wp-widget__widget__input">
+              <input class="wp-widget__sidebar__title__input" ng-model="formFields.title" aria-label="Widget name" placeholder="My Title">
+              <span class="wp-widget__sidebar__title__arrow dashicons dashicons-arrow-up"></span>
+            </md-input-container>
+          </div>
+        </div>
+
+        <div class="widget-inside wp-widget__sidebar__inside">
+          <div class="widget-content" layout="column">
+            <div class="field" ng-repeat="field in fields.dynamicFields">
+              <div layout="row">
+                <div class="wp-widget__sidebar__inside__item" ng-if="field.type != 'select' && field.type != 'radio' && field.type != 'color' && field.type != 'checkbox'" flex>
+                  <md-input-container class="md-block" flex ng-init="formFields[field.titleModel] = field.label">
+                    <label>{{formFields[field.titleModel]}}</label>
+                    <input type="{{field.type}}" name="{{field.name}}Title" id="{{field.name}}Title" ng-model="formFields[field.defaultValue]" placeholder="default value">
+                  </md-input-container>
+                </div>
+                <div class="wp-widget__sidebar__inside__item" ng-if="field.type == 'checkbox'" flex>
+                  <div class="md-block">
+                    <input type="{{field.type}}" name="{{field.name}}Title" id="{{field.name}}Title" ng-model="formFields[field.defaultValue]" placeholder="default value">
+                    <label>{{formFields[field.titleModel]}}</label>
+                  </div>
+                </div>
+                <div class="wp-widget__sidebar__inside__select" ng-if="field.type == 'select' || field.type == 'radio'" flex>
+                  <div class="layout-column">
+                    <div class="md-title">{{formFields[field.titleModel]}}</div>
+
+                    <md-radio-group class="layout-column md-padding" ng-model="formFields[field.name + 'Option']">
+                      <div ng-repeat="option in field.options" layout="row">
+                        <md-radio-button value="{{option['key']}}" aria-label="Default" >
+                          <md-tooltip>Default'<md-tooltip>
+                        </md-radio-button>
+                          <md-input-container>
+                            <label>Key</label>
+                            <input type="text" name="option" value="" ng-model="option['key']" placeholder="key" ng-trim="false" sanitize-title>
+                          </md-input-container>
+
+                          <md-input-container>
+                            <label>Value</label>
+                            <input type="text" name="option" value="" ng-model="option['value']" placeholder="value">
+                          </md-input-container>
+
+                          <md-button class="md-fab md-mini md-warn wp-widget__sidebar__inside__delete" aria-label="Delete option" ng-click="removeField(field.options, option)" ng-show="field.showSettings">
+                            <ng-md-icon class="svg--middle svg--white" icon="clear"></ng-md-icon>
+                            <md-tooltip>Delete option</md-tooltip>
+                          </md-button>
+                        </div>
+                      </md-radio-group>
+                    </div>
+
+                  <div class="wp-widget__sidebar__inside__add-option slide-toggle" flex layout-align="center" layout="row" ng-show="field.showSettings">
+                    <md-button class="md-raised md-block" ng-click="addOption(field.options, field.name + 'Select')" aria-label="Add option">
+                      <ng-md-icon icon="add" class="svg--middle"></ng-md-icon> Add option
+                      <md-tooltip>Add new option</md-tooltip>
+                    </md-button>
+                  </div>
+                </div>
+
+                <div ng-if="field.type == 'color'" class="color-picker" flex>
+                  <div class="md-title">{{formFields[field.titleModel]}}</div>
+                  <div class="md-padding">
+                    <a tabindex="0" class="wp-color-result wp-picker-open" title="Select Color" data-current="Current Color" style="background-color: {{formFields[field.defaultValue] || '#fff'}};"></a>
+                  </div>
+                </div>
+
+                <!-- Field settings button -->
+                <md-button class="md-fab md-mini" ng-class="{'md-primary': field.showSettings, 'button--gray': ! field.showSettings}" aria-label="description" ng-click="field.showSettings = ! field.showSettings">
+                  <ng-md-icon icon="{{field.showSettings ? 'remove' : 'settings'}}" options='{"rotation": "none", "duration": 375}' class="wp-widget__sidebar__inside__settings"></ng-md-icon>
+                  <md-tooltip>Toggle field settings</md-tooltip>
+                </md-button>
+              </div>
+
+              <!-- Field settings -->
+              <div class="wp-widget__widget__field__settings slide-toggle md-padding" ng-show="field.showSettings" layout="column">
+                  <!--  Field type -->
+                  <md-input-container class="md-block" ng-init="formFields[field.selectModel] = 'text'">
+                    <label>Field type</label>
+
+                    <md-select ng-model="formFields[field.selectModel]" ng-change="updateFieldSettings(fields.dynamicFields, field)">
+                      <md-option ng-value="opt | lowercase" ng-repeat="opt in fields.fieldTypes">{{ opt }}</md-option>
+                    </md-select>
+                  </md-input-container>
+
+                  <!--  Field label -->
+                  <md-input-container class="md-block">
+                    <label>Field label</label>
+                    <input type="text" ng-model="formFields[field.titleModel]" required>
+                  </md-input-container>
+
+                  <!--  Field default color -->
+                  <md-input-container class="md-block" ng-if="field.type == 'color'">
+                    <label>Default color</label>
+                    <input type="text" maxlength="7" placeholder="#fff" ng-model="formFields[field.defaultValue]" ng-pattern="/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/">
+                  </md-input-container>
+
+                  <!--  Field id -->
+                  <md-input-container class="md-block" >
+                    <label>Field ID</label>
+                    <input type="text" id="{{field.name}}Id" ng-model="formFields[field.name + 'Id']" ng-required="{{ field.required }}" placeholder="{{field.name}}" ng-init="formFields[field.name + 'Id'] = field.name" ng-trim="false" sanitize-title>
+                  </md-input-container>
+
+                  <md-button class="md-raised md-warn" aria-label="Remove field" ng-click="removeField(fields.dynamicFields, field)">
+                    <ng-md-icon icon="delete" class="svg--middle svg--white"></ng-md-icon>
+                    Remove field
+                    <md-tooltip>
+                      Remove the custom field
+                    </md-tooltip>
+                  </md-button>
+              </div>
+            </div>
+
+            <md-button class="md-raised md-primary md-block wp-widget__sidebar__inside__add" ng-click="addField(fields.dynamicFields)" aria-label="Add field" flex>
+              <ng-md-icon icon="playlist_add"></ng-md-icon> Add field
+              <md-tooltip>Add new custom field</md-tooltip>
+            </md-button>
+          </div>
+        </div>
+      </div>
+  </div>
+
+</div>

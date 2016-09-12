@@ -1,0 +1,88 @@
+<md-tabs md-border-bottom md-dynamic-height>
+  <md-tab ng-repeat="field in fields.fields">
+    <md-tab-label>{{field.label}}</md-tab-label>
+    <md-tab-body layout="column">
+
+      <div class="layout-{{field.layoutType || 'row'}} md-padding tab-body layout-wrap bg-scrollable" flex>
+        <div ng-repeat="field in field.fields" ng-class="field.layoutClass" class="flex-{{field.flex || 33}}" ng-if="field.ifField ? (formFields[field.ifField] == field.ifEqual || field.keepSpace ) : true">
+          <div ng-if="field.ifField ? formFields[field.ifField] == field.ifEqual : true">
+            <!--  -->
+            <md-input-container ng-if="! field.sanitize && field.type != 'checkbox' && field.type != 'label' && field.type != 'select' && field.type != 'dashicons' && field.type != 'switch'" ng-class="field.cssClass">
+              <label for="{{field.name}}">{{field.label}}</label>
+              <input type="{{ field.type }}" name="{{ field.name }}" id="{{ field.id }}" value="{{field.value}}" placeholder="{{field.placeholder}}" ng-required="{{ field.required }}" ng-model="formFields[field.name]" ng-focus="showHelp(field.name);highlight(field.highlight)" ng-blur="hideHelp();removeHighlight(field.highlight)" ng-class="field.class">
+              <div ng-messages="wordpress[field.name].$error" md-auto-hide="false">
+                <div ng-message="required">
+                  This field is required
+                </div>
+              </div>
+            </md-input-container>
+
+            <!-- Field need to be sanitized -->
+            <md-input-container ng-if="field.sanitize && field.type != 'checkbox' && field.type != 'label' && field.type != 'select' && field.type != 'dashicons' && field.type != 'switch'" ng-class="field.cssClass">
+              <label for="{{field.name}}">{{field.label}}</label>
+              <input type="{{ field.type }}" name="{{ field.name }}" id="{{ field.name }}" value="{{field.value}}" placeholder="{{field.placeholder}}" ng-required="{{ field.required }}" ng-model="formFields[field.name]" ng-focus="showHelp(field.name);highlight(field.highlight)" ng-blur="hideHelp();removeHighlight(field.highlight)" ng-trim="false" ng-class="field.class" sanitize-title>
+              <div ng-messages="wordpress[field.name].$error" md-auto-hide="false">
+                <div ng-message="required">
+                  This field is required
+                </div>
+              </div>
+            </md-input-container>
+
+            <div ng-if="field.type == 'checkbox'" ng-class="field.cssClass">
+              <md-checkbox
+                name="{{field.name}}[]"
+                id="{{field.name || field.id}}"
+                value="{{field.value || field.id}}"
+                aria-label="{{field.label}}"
+                ng-init="setAsChecked(field.name, field.id, field.checked)"
+                ng-click="toggleSelection(field.name, field.id)"
+                ng-checked="formFields[field.name].indexOf(field.id) > -1">
+                  {{field.label}}
+              </md-checkbox>
+            </div>
+
+            <div ng-if="field.type == 'switch'" ng-class="field.cssClass">
+              <md-switch name="{{ field.name }}" id="{{ field.id  || field.name }}" value="{{field.value || field.id}}" ng-model="formFields[field.name]" ng-init="formFields[field.name] = field.checked">{{field.label}}</md-switch>
+            </div>
+
+            <!-- Dashicons -->
+            <div ng-if="field.type == 'dashicons'" class="dashicons-container">
+              <md-input-container ng-class="field.cssClass" ng-mouseenter="showHelp(field.name);" ng-mouseleave="hideHelp()">
+                <label for="{{field.name}}">{{field.label}}</label>
+                <input type="text" name="searchIcon" id="searchIcon" ng-model="searchIcon" ng-focus="showDashIcons = true" ng-blur="showDashIcons = false" ng-class="field.class">
+              </md-input-container>
+
+              <div class="{{field.containerClass}} bg-scrollable slide-toggle">
+                <button class="md-button md-ink-ripple" ng-repeat="option in field.options | filter:searchIcon" ng-click="formFields[field.name] = option" ng-class="{'md-accent': formFields[field.name] === option}" aria-label="{{option}}">
+                  <span class="dashicons" ng-class="option"></span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Select -->
+            <div ng-if="field.type == 'select'">
+              <md-input-container ng-mouseenter="showHelp(field.name);highlight(field.highlight)" ng-mouseleave="hideHelp();removeHighlight(field.highlight)" ng-class="field.cssClass">
+                <label for="{{field.name}}">{{field.label}}</label>
+                <md-select ng-model="formFields[field.name]" ng-required="field.required" md-container-class="{{field.containerClass}}" ng-if="! field.hasLabels">
+                    <md-option ng-repeat="option in field.options" ng-value="option" ng-selected="option == field.default">{{option}}</md-option>
+                </md-select>
+
+                <md-select ng-model="formFields[field.name]" ng-required="field.required" md-container-class="{{field.containerClass}}" ng-if="field.hasLabels">
+                  <md-option ng-repeat="(option, value) in field.options" ng-value="option == '@' ? formFields[value] : option" ng-selected="option == field.default" ng-if="option == '@' ? formFields[value] : true" ng-click="formFields[field.name + 'Title'] = value">{{option == '@' ? formFields[value] : value}}</md-option>
+                </md-select>
+              </md-input-container>
+            </div>
+
+            <!-- Label -->
+
+            <div class="md-title" ng-if="field.type == 'label'" ng-class="field.cssClass" ng-mouseenter="showHelp(field.name);" ng-mouseleave="hideHelp()"><label for="{{field.name}}">{{field.label}}</label></div>
+            <!-- Help field -->
+            <p class="hidden" data-field="{{field.name}}" data-ng-bind-html="field.p"></p>
+          </div>
+        </div>
+      </div>
+
+      <div ng-if="field.html" ng-include="field.html"></div>
+    </md-tab-body>
+  </md-tab>
+</md-tabs>

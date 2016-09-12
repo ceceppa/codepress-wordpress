@@ -1,0 +1,19 @@
+<span ng-show="wordpress.pluginName.$valid">&lt;?php
+/**
+* Plugin Name: {{ formFields['pluginName'] }}<span ng-show="wordpress.pluginUri.$modelValue.length && wordpress.pluginUri.$valid" class="bounce">
+* Plugin Uri: {{ formFields['pluginUri'] }}</span><span ng-show="wordpress.pluginDescription.$modelValue.length">
+* Description: {{ formFields['pluginDescription'] }}</span><span ng-show="wordpress.pluginVersion.$modelValue.length">
+* Version: {{ formFields['pluginVersion'] }}</span><span ng-show="wordpress.pluginAuthor.$modelValue.length">
+* Author: {{ formFields['pluginAuthor'] }}</span><span ng-show="wordpress.pluginAuthorUri.$modelValue.length">
+* Author URI: {{ formFields['pluginAuthorUri'] }}</span><span ng-show="wordpress.pluginTextdomain.$modelValue.length">
+* Text Domain: {{ formFields['pluginTextdomain'] }}</span><span ng-show="wordpress.pluginDomainpath.$modelValue.length">
+* Domain Path: {{ formFields['pluginDomainpath'] }}</span><span ng-show="formFields.pluginNetwork.length">
+* Network: true</span><span ng-show="wordpress.pluginLicense.$modelValue.length">
+* License: {{ formFields['pluginLicense'] }}</span>
+*/
+
+if ( ! defined( 'ABSPATH' ) ) {
+    echo 'Hi there! I\'m just a plugin.';
+    exit;
+}
+</span>
